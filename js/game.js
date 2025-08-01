@@ -1,7 +1,12 @@
+// Game body is a DIV inside of the body, where the game content gets updated
 const gameBody = document.getElementById("gameBody");
+// You can find the deck and card classes inside of js/classes.js
 let deck = null;
+// This object contains all the info for the current hand.
+// Note that while currentHand will reset every hand, the count and deck will not.
 let currentHand = [null, null];
 
+// This is the intro screen before the game starts.
 function gameSettings() {
   gameBody.innerHTML = `
     <fieldset style="padding-bottom:0px;">
@@ -18,6 +23,7 @@ function gameSettings() {
   `;
 }
 
+// Called on the button press in settings. Inits the deck and starts a hand. 
 function startGame() {
   if (document.getElementById("gameSettingsDeckCount").value < 1) {
     document.location.href = "/play?error=You must have at least 1 deck.";
@@ -26,7 +32,9 @@ function startGame() {
   startHand();
 }
 
+// This is the function to call when starting a new hand.
 function startHand() {
+  // Blank a first, it's populated later in this function with hit calls
   currentHand = {
     "house": {
       "cards": [],
@@ -106,6 +114,9 @@ function startHand() {
   hydrate();
 }
 
+// Refreshes the data on screen.
+// The "isaction" var is used to determine when the first dealer card should be shown.
+// Its a little hacky but idc.
 function hydrate() {
   document.getElementById("playerHand").innerHTML = currentHand["player"]["toString"];
   document.getElementById("playerHandSum").innerHTML = currentHand["player"]["sum"];
@@ -129,6 +140,7 @@ function hydrate() {
   }
 }
 
+// Player hit function.
 function playerHit() {
   let newCard = deck.getRandomCard();
   if (newCard.getValue() == 11) {
@@ -140,7 +152,7 @@ function playerHit() {
   hydrate();
 }
 
-
+// House hit function
 function houseHit() {
   let newCard = deck.getRandomCard();
   if (newCard.getValue() == 11) {
@@ -151,6 +163,8 @@ function houseHit() {
   currentHand["house"]["sum"] += newCard.getValue()
   hydrate();
 }
+
+// All of the functions below are just opening dialogs.
 
 function bust() {
   document.getElementById("bustDialog").show();
@@ -169,6 +183,7 @@ function countOpen() {
   document.getElementById("countDialog").show();
 }
 
+// Turns action off, hydrates to show the dealers card, and then runs out the dealers cards if neccesary.
 function stand() {
   currentHand["isaction"] = false;
   hydrate();
