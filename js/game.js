@@ -54,19 +54,19 @@ function startHand() {
   <nav class="toolbar" style="width:100%!important;">
     <a onclick="playerHit()">
       <i>wrist</i>
-      <div>Hit</div>
+      <div class="nomobile"> Hit</div>
     </a>
     <a>
       <i>attach_money</i>
-      <div>Double</div>
+      <div class="nomobile"> Double</div>
     </a>
     <a onclick="stand()">
       <i>front_hand</i>
-      <div>Stand</div>
+      <div class="nomobile"> Stand</div>
     </a>
     <a onclick="countOpen()">
       <i>quiz</i>
-      <div>Count</div>
+      <div class="nomobile">Count</div>
     </a>
   </nav>
 </nav>
