@@ -43,7 +43,7 @@
             <p>Click the button below to start a new game</p>
             <div class="space"></div>
             <nav class="center-align">
-                <button class="responsive">
+                <button class="responsive" onclick="window.location.href = '/play';">
                     <i>add</i>
                     <span>New Game</span>
                 </button>
