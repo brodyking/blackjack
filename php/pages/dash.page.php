@@ -21,24 +21,33 @@
             <button class="circle transparent">
                 <i>menu</i>
                 <menu class="no-wrap right">
-                    <li><a href="/"><i>playing_cards</i>Games</a></li>
+                    <li><a href="/"><i>home</i>Home</a></li>
                     <li><a href="/settings"><i>settings</i>Settings</a></li>
-                    <li><a href="/api/usr/logout"><i>door_back</i>Logout</a></li>
                 </menu>
             </button>
             <h6 class="max center-align">Blackjack</h6>
             <button class="circle transparent">
-                <i>code</i>
+                <i>person</i>
                 <menu class="no-wrap left">
-                    <li><a href="https://www.github.com/brodyking/blackjack"><i>open_in_new</i>Github</a></li>
+                    <li><i>person</i><?php echo $username; ?></li>
+                    <li><a href="/api/usr/logout"><i>door_back</i>Logout</a></li>
                 </menu>
 
             </button>
         </nav>
     </header>
-    <article class="middle-align center-align">
-        <div style="width: 250px;">
-            Logged in.
+    <article class="medium middle-align center-align">
+        <div>
+            <i class="extra">casino</i>
+            <h5>No active games</h5>
+            <p>Click the button below to start a new game</p>
+            <div class="space"></div>
+            <nav class="center-align">
+                <button class="responsive">
+                    <i>add</i>
+                    <span>New Game</span>
+                </button>
+            </nav>
         </div>
     </article>
 </body>
