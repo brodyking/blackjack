@@ -76,6 +76,7 @@ function isloggedin()
 if (isset($routes["global"][$url])) {
     include __DIR__ . $routes["global"][$url];
 } else if (isloggedin() && isset($routes["withAuth"][$url])) {
+    $username = $_COOKIE["username"];
     include __DIR__ . $routes["withAuth"][$url];
 } else if (isset($routes["noAuth"][$url])) {
     include __DIR__ . $routes["noAuth"][$url];
