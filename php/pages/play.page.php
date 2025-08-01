@@ -29,7 +29,6 @@
     </div>
     <script src="/js/classes.js"></script>
     <script src="/js/game.js"></script>
-    <script src="/lib/cardmeister/elements.cardmeister.full.js"></script>
 </body>
 
 </html>
