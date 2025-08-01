@@ -15,7 +15,8 @@ $routes = [
     ],
     "withAuth" => [
         "/" => "/php/pages/dash.page.php",
-        "/settings" => "/php/pages/settings.page.php"
+        "/settings" => "/php/pages/settings.page.php",
+        "/play" => "/php/pages/play.page.php"
     ],
     "global" => [
         "/api/usr/register" => "/php/api/usr/register.api.php",
@@ -75,9 +76,13 @@ function isloggedin()
 
 if (isset($routes["global"][$url])) {
     include __DIR__ . $routes["global"][$url];
-} else if (isloggedin() && isset($routes["withAuth"][$url])) {
-    $username = $_COOKIE["username"];
-    include __DIR__ . $routes["withAuth"][$url];
+} else if (isloggedin()) {
+    if (isset($routes["withAuth"][$url])) {
+        $username = $_COOKIE["username"];
+        include __DIR__ . $routes["withAuth"][$url];
+    } else {
+        include __DIR__ . "/php/pages/404.page.php";
+    }
 } else if (isset($routes["noAuth"][$url])) {
     include __DIR__ . $routes["noAuth"][$url];
 } else {
