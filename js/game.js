@@ -138,6 +138,9 @@ function hydrate() {
       bust();
     }
   }
+  if (currentHand["player"]["sum"] == 21) {
+    win();
+  }
 }
 
 // Player hit function.
