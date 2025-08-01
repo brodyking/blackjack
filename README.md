@@ -28,6 +28,7 @@ I definitely missed some here but oh well. I will expand later.
 - [x] PWA and project structure
 - [x] Basic API and Database
 - [x] Account registeration and login
-- [ ] Game page
+- [x] Game page
+- [x] Multiple decks + Counting features
+- [ ] Hidden first card from dealer
 - [ ] Simple game api (havent decided if it should be done client or server side)
-- [ ] Multiple decks + Counting features
