@@ -7,7 +7,7 @@ A simple blackjack app.
 - Apache Web Server with `mod_rewrite` enabled.
 - SQLite3
 
-Included libs: BeerCSS, Cardmeister
+Included libs: [BeerCSS](https://www.beercss.com/), [SVG-Playing-Cards](https://github.com/MattCain/svg-playing-cards)
 
 ## Install
 
