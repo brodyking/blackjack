@@ -3,7 +3,7 @@
 
 <head>
     <title>Register - Blackjack</title>
-    <?php include $snippits["head"]; ?>
+    <?php include $snippets["head"]; ?>
 </head>
 
 <body style="max-width: 400px;margin:auto;margin-top:50px;" class="dark">

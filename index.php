@@ -2,8 +2,8 @@
 
 $url = $_SERVER["REQUEST_URI"];
 $dbpath = __DIR__ . "/database.db";
-$snippits = [
-    "head" => __DIR__ . "/php/snippits/head.snippit.php"
+$snippets = [
+    "head" => __DIR__ . "/php/snippets/head.snippet.php"
 ];
 
 // All available routes
