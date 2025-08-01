@@ -55,4 +55,8 @@ dialog {
   .actionbar>.toolbar {
     margin-top: 0px !important;
   }
+
+  .nomobile {
+    display: none !important;
+  }
 }
