@@ -1,0 +1,181 @@
+const gameBody = document.getElementById("gameBody");
+let deck = null;
+let currentHand = [null, null];
+
+function gameSettings() {
+  gameBody.innerHTML = `
+    <fieldset style="padding-bottom:0px;">
+      <legend>How many decks?</legend>
+      <div class="field border">
+        <input type="number" id="gameSettingsDeckCount" value="4">
+      </div>
+    </fieldset>
+    <div class="space"></div>
+    <button class="responsive" onclick="startGame();">
+      <i>play_arrow</i>
+      <span>Start game</span>
+    </button>
+  `;
+}
+
+function startGame() {
+  if (document.getElementById("gameSettingsDeckCount").value < 1) {
+    document.location.href = "/play?error=You must have at least 1 deck.";
+  }
+  deck = new Deck(document.getElementById("gameSettingsDeckCount").value);
+  startHand();
+}
+
+function startHand() {
+  currentHand = {
+    "house": {
+      "cards": [],
+      "sum": 0,
+      "toString": "",
+      "acesUsed": 0
+    },
+    "player": {
+      "cards": [],
+      "sum": 0,
+      "toString": "",
+      "acesUsed": 0
+    }
+  };
+  gameBody.innerHTML = `
+<article class="border" style="float:left;display:block;text-align:left;margin-top:5px;">
+  <h5>House (<span id="houseHandSum"></span>)</h5>
+  <span id="houseHand"></span>
+</article>
+<article class="border" style="float:right;display:block;text-align:right;margin-top:5px;">
+  <h5>Player (<span id="playerHandSum"></span>)</h5>
+  <span id="playerHand"></span>
+</article>
+<nav class="tiny-space actionbar" style="width:100%!important;">
+  <nav class="toolbar" style="width:100%!important;">
+    <a onclick="playerHit()">
+      <i>wrist</i>
+      <div>Hit</div>
+    </a>
+    <a>
+      <i>attach_money</i>
+      <div>Double</div>
+    </a>
+    <a onclick="stand()">
+      <i>front_hand</i>
+      <div>Stand</div>
+    </a>
+    <a onclick="countOpen()">
+      <i>quiz</i>
+      <div>Count</div>
+    </a>
+  </nav>
+</nav>
+<dialog id="bustDialog">
+  <h5>You busted.</h5>
+  <div>You'll get em next time.</div>
+  <nav class="right-align no-space">
+    <button onclick="startHand();" class="transparent link">Next Round</button>
+  </nav>
+</dialog>
+<dialog id="lossDialog">
+  <h5>You lost.</h5>
+  <div>You'll get em next time.</div>
+  <nav class="right-align no-space">
+    <button onclick="startHand();" class="transparent link">Next Round</button>
+  </nav>
+</dialog>
+<dialog id="winDialog">
+  <h5>You won!</h5>
+  <div>Good job!</div>
+  <nav class="right-align no-space">
+    <button onclick="startHand();" class="transparent link">Next Round</button>
+  </nav>
+</dialog>
+<dialog id="countDialog">
+  <div>The current count is <span id="countDialogNumber"></span>.</div>
+  <nav class="right-align no-space">
+    <button onclick="document.getElementById('countDialog').close();" class="transparent link">Close</button>
+  </nav>
+</dialog>
+  `;
+  houseHit();
+  houseHit();
+  playerHit();
+  playerHit();
+  hydrate();
+}
+
+function hydrate() {
+  document.getElementById("playerHand").innerHTML = currentHand["player"]["toString"];
+  document.getElementById("playerHandSum").innerHTML = currentHand["player"]["sum"];
+  document.getElementById("houseHand").innerHTML = currentHand["house"]["toString"];
+  document.getElementById("houseHandSum").innerHTML = currentHand["house"]["sum"];
+
+  if (currentHand["player"]["sum"] > 21) {
+    if (currentHand["player"]["acesUsed"] > 0) {
+      currentHand["player"]["sum"] -= 10;
+      currentHand["player"]["acesUsed"]--;
+      hydrate();
+    } else {
+      bust();
+    }
+  }
+}
+
+function playerHit() {
+  let newCard = deck.getRandomCard();
+  if (newCard.getValue() == 11) {
+    currentHand["player"]["acesUsed"] += 1;
+  }
+  currentHand["player"]["cards"].push(newCard);
+  currentHand["player"]["toString"] += newCard.toString();
+  currentHand["player"]["sum"] += newCard.getValue();
+  hydrate();
+}
+
+
+function houseHit() {
+  let newCard = deck.getRandomCard();
+  if (newCard.getValue() == 11) {
+    currentHand["house"]["acesUsed"] += 1;
+  }
+  currentHand["house"]["cards"].push(newCard);
+  currentHand["house"]["toString"] += newCard.toString();
+  currentHand["house"]["sum"] += newCard.getValue()
+  hydrate();
+}
+
+function bust() {
+  document.getElementById("bustDialog").show();
+}
+
+function loss() {
+  document.getElementById("lossDialog").show();
+}
+
+function win() {
+  document.getElementById("winDialog").show();
+}
+
+function countOpen() {
+  document.getElementById("countDialogNumber").innerHTML = deck.getCount();
+  document.getElementById("countDialog").show();
+}
+
+function stand() {
+
+  if (currentHand["house"]["sum"] < 17) {
+    while (currentHand["house"]["sum"] < 17) {
+      houseHit();
+    }
+  }
+  if (currentHand["house"]["sum"] > 21) {
+    win();
+  } else if (currentHand["house"]["sum"] > currentHand["player"]["sum"]) {
+    loss();
+  } else {
+    win();
+  }
+}
+
+gameSettings();
