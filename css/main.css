@@ -20,3 +20,39 @@ article {
   margin-left: 10px;
   margin-right: 10px;
 }
+
+[class*=" pcard-"],
+[class^=pcard-] {
+  width: 80px !important;
+  height: 100px !important;
+  margin-top: 20px;
+}
+
+#gameBody {
+  height: 100vh;
+}
+
+.actionbar {
+  width: 100% !important;
+}
+
+.actionbar>.toolbar {
+  margin-top: 15px !important;
+}
+
+dialog {
+  margin-top: 100px;
+}
+
+/* Smartphones (landscape) ----------- */
+@media only screen and (max-width : 795px) {
+  .actionbar {
+    margin-top: 0px !important;
+    position: absolute !important;
+    bottom: 100px;
+  }
+
+  .actionbar>.toolbar {
+    margin-top: 0px !important;
+  }
+}
