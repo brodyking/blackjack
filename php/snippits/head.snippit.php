@@ -12,7 +12,7 @@
 <link href="/img/logo180.png" rel="apple-touch-icon" sizes="180x180">
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="VinylDB">
+<meta name="apple-mobile-web-app-title" content="Blackjack">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#141316">
