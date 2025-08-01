@@ -39,7 +39,8 @@ function startHand() {
       "sum": 0,
       "toString": "",
       "acesUsed": 0
-    }
+    },
+    "isaction": true
   };
   gameBody.innerHTML = `
 <article class="border" style="float:left;display:block;text-align:left;margin-top:5px;">
@@ -108,9 +109,15 @@ function startHand() {
 function hydrate() {
   document.getElementById("playerHand").innerHTML = currentHand["player"]["toString"];
   document.getElementById("playerHandSum").innerHTML = currentHand["player"]["sum"];
-  document.getElementById("houseHand").innerHTML = currentHand["house"]["toString"];
-  document.getElementById("houseHandSum").innerHTML = currentHand["house"]["sum"];
-
+  if (currentHand["house"]["cards"].length > 1) {
+    if (currentHand["isaction"]) {
+      document.getElementById("houseHand").innerHTML = `<span class="pcard-back"></span>` + currentHand["house"]["cards"][1].toString();
+      document.getElementById("houseHandSum").innerHTML = currentHand["house"]["cards"][1].getValue();
+    } else {
+      document.getElementById("houseHand").innerHTML = currentHand["house"]["toString"];
+      document.getElementById("houseHandSum").innerHTML = currentHand["house"]["sum"];
+    }
+  }
   if (currentHand["player"]["sum"] > 21) {
     if (currentHand["player"]["acesUsed"] > 0) {
       currentHand["player"]["sum"] -= 10;
@@ -163,7 +170,8 @@ function countOpen() {
 }
 
 function stand() {
-
+  currentHand["isaction"] = false;
+  hydrate();
   if (currentHand["house"]["sum"] < 17) {
     while (currentHand["house"]["sum"] < 17) {
       houseHit();

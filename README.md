@@ -30,5 +30,5 @@ I definitely missed some here but oh well. I will expand later.
 - [x] Account registeration and login
 - [x] Game page
 - [x] Multiple decks + Counting features
-- [ ] Hidden first card from dealer
+- [x] Hidden first card from dealer
 - [ ] Simple game api (havent decided if it should be done client or server side)
