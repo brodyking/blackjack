@@ -3,8 +3,7 @@
 $url = $_SERVER["REQUEST_URI"];
 $dbpath = __DIR__ . "/database.db";
 $snippits = [
-    "head" => __DIR__ . "/php/snippits/head.snippit.php",
-    "nav" => __DIR__ . "/php/snippits/nav.snippit.php"
+    "head" => __DIR__ . "/php/snippits/head.snippit.php"
 ];
 
 // All available routes
@@ -15,7 +14,8 @@ $routes = [
         "/register" => "/php/pages/register.page.php"
     ],
     "withAuth" => [
-        "/" => "/php/pages/dash.page.php"
+        "/" => "/php/pages/dash.page.php",
+        "/settings" => "/php/pages/settings.page.php"
     ],
     "global" => [
         "/api/usr/register" => "/php/api/usr/register.api.php",
