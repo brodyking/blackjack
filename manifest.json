@@ -1,0 +1,17 @@
+{
+  "short_name": "VinylDB",
+  "description": "Your personal vinyl record collection database.",
+  "name": "VinylDB",
+  "icons": [
+    {
+      "src": "/img/logo180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#141316",
+  "background_color": "#141316",
+  "scope": "/"
+}

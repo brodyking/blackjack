@@ -1,0 +1,22 @@
+@font-face {
+  font-family: Ubuntu;
+  src: url('/fonts/Ubuntu-Regular.ttf');
+}
+
+body {
+  font-family: Ubuntu !important;
+}
+
+.text-link {
+  color: #cfbcff !important;
+  text-decoration: underline !important;
+}
+
+.text-link:hover {
+  text-decoration: none !important;
+}
+
+article {
+  margin-left: 10px;
+  margin-right: 10px;
+}
