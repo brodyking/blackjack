@@ -1,0 +1,180 @@
+export class Interface {
+
+  constructor() {
+    this.dom = document.getElementById("gameBody");
+  }
+
+  startScreen() {
+    this.dom.innerHTML = `
+    <fieldset style="padding-bottom:0px;">
+      <legend>How many decks?</legend>
+      <div class="field border">
+        <input type="number" id="gameSettingsDeckCount" value="4">
+      </div>    
+    </fieldset>
+    <fieldset style="padding-bottom:0px;">
+      <legend>How many Players?</legend>
+        <div class="field border">
+        <input type="number" id="gameSettingsPlayersCount" value="4">
+      </div>
+    </fieldset>
+    <fieldset style="padding-bottom:0px;">
+      <legend>What is the starting balance?</legend>
+        <div class="field border">
+        <input type="number" id="gameSettingsStartingBalance" value="4">
+      </div>
+    </fieldset>
+    <div class="space"></div>
+    <button class="responsive" onclick="window.game.startGame();">
+      <i>play_arrow</i>
+      <span>Start game</span>
+    </button>
+  `;
+  }
+
+  gameScreen(players) {
+    let playersarea = "";
+    let floatdirection = "left";
+    players.forEach((player) => {
+      playersarea += `
+      <article class="border" id="`+ player.name + `-box" style="float:` + floatdirection + `;display:block;text-align:` + floatdirection + `;margin-top:5px;">
+        <h5>` + player.name + `<span style="color: #4caf50;" id="` + player.name + `-balance"></span></h5>
+        <span id="`+ player.name + `-hand"></span>
+        <h5 style="text-align:center;margin:0px;" id="` + player.name + `-sum"></h5>
+        </article>`
+      if (floatdirection == "left") {
+        floatdirection = "right";
+      } else {
+        floatdirection = "left";
+      }
+    });
+    this.dom.innerHTML = playersarea +
+      `<article class="border" style="float:` + floatdirection + `;display:block;text-align:left;margin-top:5px;" id="house-box">
+        <h5>House <span id="house-balance"></span></h5>
+        <span id="house-hand"></span>
+        <h5 style="text-align:center;margin:0px;" id="house-sum"></h5>
+      </article>
+      <nav class="tiny-space actionbar" style="width:100%!important;">
+        <nav class="toolbar" style="width:100%!important;">
+          <a onclick="game.userHit()">
+            <i>wrist</i>
+            <div class="nomobile"> Hit</div>
+          </a>
+          <a>
+            <i>attach_money</i>
+            <div class="nomobile"> Double</div>
+          </a>
+          <a onclick="game.userStand()">
+            <i>front_hand</i>
+            <div class="nomobile"> Stand</div>
+          </a>
+          <a onclick="countOpen()">
+            <i>quiz</i>
+            <div class="nomobile">Count</div>
+          </a>
+        </nav>
+      </nav>
+      <dialog id="bustDialog">
+        <h5 class="error-text">You busted at <span id="bustDialogScore"></span>.</h5>
+        <div class="error-text">You'll get em next time.</div>
+                <nav class="right-align no-space">
+          <button onclick="game.startRound();" class="transparent link">Next Round</button>
+        </nav>
+      </dialog>
+      <dialog id="lossDialog">
+        <h5 class="error-text">You lost at <span id="lossDialogScore"></span>.</h5>
+        <div>You'll get em next time.</div>
+        <nav class="right-align no-space">
+          <button onclick="game.startRound();" class="transparent link">Next Round</button>
+        </nav>
+      </dialog>
+      <dialog id="winDialog">
+        <h5 style="color:#8bc34a">You won at <span id="winDialogScore"></span>!</h5>
+        <div>Good job!</div>
+        <nav class="right-align no-space">
+          <button onclick="game.startRound();" class="transparent link">Next Round</button>
+        </nav>
+      </dialog>
+      <dialog id="blackjackDialog">
+        <h5 style="color:#8bc34a">Blackjack!</h5>
+        <div>Good job!</div>
+        <nav class="right-align no-space">
+          <button onclick="game.startRound();" class="transparent link">Next Round</button>
+        </nav>
+      </dialog>
+      <dialog id="countDialog">
+        <div>The current count is <span id="countDialogNumber"></span>.</div>
+        <nav class="right-align no-space">
+          <button onclick="document.getElementById('countDialog').close();" class="transparent link">Close</button>
+        </nav>
+      </dialog>`;
+  }
+
+  hydrate(players, house, activePlayer) {
+    players.forEach((player) => {
+      if (activePlayer.name == player.name) {
+        document.getElementById(player.name + "-box").classList.add("primary-border");
+      } else {
+        document.getElementById(player.name + "-box").classList.remove("primary-border");
+      }
+      if (activePlayer.name == "House") {
+        document.getElementById("house-box").classList.add("primary-border");
+      } else {
+        document.getElementById("house-box").classList.remove("primary-border");
+      }
+      document.getElementById(player.name + "-hand").innerHTML = player.hand.toString();
+      document.getElementById(player.name + "-balance").innerHTML = " ($" + player.balance + ")";
+      document.getElementById(player.name + "-sum").innerHTML = " (" + player.hand.getSum() + ")";
+    });
+    document.getElementById("house-hand").innerHTML = house.hand.toString();
+    document.getElementById("house-sum").innerHTML = " (" + house.hand.getSum() + ")";
+    // document.getElementById("playerHand").innerHTML = currentHand["player"]["toString"];
+    // document.getElementById("playerHandSum").innerHTML = currentHand["player"]["sum"];
+    // if (currentHand["house"]["cards"].length > 1) {
+    //   if (currentHand["isaction"]) {
+    //     document.getElementById("houseHand").innerHTML = `<span class="pcard-back"></span>` + currentHand["house"]["cards"][1].toString();
+    //     document.getElementById("houseHandSum").innerHTML = currentHand["house"]["cards"][1].getValue();
+    //   } else {
+    //     document.getElementById("houseHand").innerHTML = currentHand["house"]["toString"];
+    //     document.getElementById("houseHandSum").innerHTML = currentHand["house"]["sum"];
+    //   }
+    // }
+    // if (currentHand["player"]["sum"] > 21) {
+    //   if (currentHand["player"]["acesUsed"] > 0) {
+    //     currentHand["player"]["sum"] -= 10;
+    //     currentHand["player"]["acesUsed"]--;
+    //     hydrate();
+    //   } else {
+    //     bust();
+    //   }
+    // }
+    // if (currentHand["player"]["sum"] == 21) {
+    //   win();
+    // }
+  }
+
+  bust(playerSum, houseSum) {
+    document.getElementById("bustDialog").show();
+    document.getElementById("bustDialogScore").innerHTML = playerSum + " - " + houseSum;
+  }
+
+
+  lose(playerSum, houseSum) {
+    document.getElementById("lossDialog").show();
+    document.getElementById("lossDialogScore").innerHTML = playerSum + " - " + houseSum;
+  }
+
+  win(playerSum, houseSum) {
+    document.getElementById("winDialog").show();
+    document.getElementById("winDialogScore").innerHTML = playerSum + " - " + houseSum;
+  }
+
+  blackjack() {
+    document.getElementById("blackjackDialog").show();
+  }
+
+  showError(errormessage) {
+    console.log(errormessage);
+  }
+
+}

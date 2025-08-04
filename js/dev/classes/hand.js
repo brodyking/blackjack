@@ -1,0 +1,66 @@
+export class Hand {
+  constructor(isDealer) {
+    // isDealer determines which cards are shown in the toString
+    this.isDealer = isDealer;
+    // if it is the dealers turn, all the cards will be shown.
+    this.isDealerPlaying = false;
+    this.cards = [];
+    this.aces = 0;
+    this.sum = 0;
+  }
+
+  clear() {
+    this.cards = [];
+    this.aces = 0;
+    this.sum = 0;
+  }
+
+  // addCard adds the card to the cards array, then checks if it is an ace.
+  // If so, it adds to the aces var and adds 11, then calls checkAce().
+  addCard(card) {
+    this.cards.push(card);
+    if (card.rank == "a") {
+      this.aces++;
+      this.sum += 11;
+      this.checkAce();
+    } else {
+      this.sum += parseInt(card.getValue());
+    }
+  }
+
+  checkAce() {
+    if (this.aces > 0 && this.sum > 21) {
+      this.sum -= 10;
+      this.aces--;
+
+      if (this.sum > 21 && this.aces > 0) {
+        checkAce();
+      }
+
+    }
+  }
+
+  getSum() {
+    if (this.isDealer && this.isDealerPlaying == false) {
+      return this.cards[1].getValue();
+    } else {
+      return this.sum;
+    }
+  }
+
+  // Checks if the hand is a dealers hand.
+  // If it is a dealer, it returns a blank card and their second card.
+  // If not a dealer, it returns all the cards.
+  toString() {
+    if (this.isDealer && this.isDealerPlaying == false) {
+      return "<span class='pcard-back'></span>" + this.cards[1].toString();
+    } else {
+      let deckToString = "";
+      this.cards.forEach((element) => {
+        deckToString += element.toString();
+      })
+      return deckToString;
+    }
+  }
+
+}
