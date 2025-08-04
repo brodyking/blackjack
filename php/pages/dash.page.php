@@ -4,6 +4,7 @@
 <head>
     <title>Blackjack</title>
     <?php include $snippets["head"]; ?>
+    <link href="/lib/svg-playing-cards-master/playing-cards.min.css" rel="stylesheet">
 </head>
 
 <body style="max-width: 600px;margin:auto;margin-top:25px" class="dark">
@@ -21,7 +22,7 @@
             <button class="circle transparent">
                 <i>menu</i>
                 <menu class="no-wrap right">
-                    <li><a href="/"><i>home</i>Home</a></li>
+                    <li><a href="/"><i>playing_cards</i>Play</a></li>
                     <li><a href="/settings"><i>settings</i>Settings</a></li>
                     <li><a href="/credits"><i>history_edu</i>Credits</a></li>
                 </menu>
@@ -37,20 +38,9 @@
             </button>
         </nav>
     </header>
-    <article class="medium middle-align center-align">
-        <div>
-            <i class="extra">casino</i>
-            <h5>No active games</h5>
-            <p>Click the button below to start a new game</p>
-            <div class="space"></div>
-            <nav class="center-align">
-                <button class="responsive" onclick="window.location.href = '/play';">
-                    <i>add</i>
-                    <span>New Game</span>
-                </button>
-            </nav>
-        </div>
-    </article>
+    <div id="gameBody">
+    </div>
+    <script type="module" src="/js/main.js"></script>
 </body>
 
 </html>
