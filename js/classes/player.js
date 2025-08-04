@@ -21,6 +21,7 @@ export class Player {
     this.bet = 0;
     this.isDoubleDown = false;
     this.hasHit = false;
+    this.hand.clear()
   }
   betPlace(amount) {
     this.bet = amount;
