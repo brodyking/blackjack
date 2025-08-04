@@ -114,50 +114,56 @@ export class Game {
   }
 
   userDoubleDown() {
-    if (this.players[this.posAtTable].isDoubleDown == false) {
-      this.players[this.posAtTable].doubleDown();
-      this.players[this.posAtTable].hand.addCard(this.shoe.popRandomCard());
-      this.userStand();
+    if (this.players[this.posAtTable].bet > this.players[this.posAtTable].balance) {
+      // If bet is bigger than balance
+      this.interface.showError("You cannot bet more than you balance.");
     } else if (this.players[this.posAtTable].hasHit == true) {
+      // If hit before double down
       this.interface.showError("You cannot double down after hitting.");
-    } else {
+    } else if (this.players[this.posAtTable].isDoubleDown != false || ) {
+      // Already doubled down
       this.interface.showError("You already doubled down.");
-    }
+    } else
+      // Allowed to double down
+      this.players[this.posAtTable].doubleDown();
+    this.players[this.posAtTable].hand.addCard(this.shoe.popRandomCard());
+    this.userStand();
   }
+}
 
-  userStand() {
-    this.isUsersTurn = false;
-    this.postUserTurn();
-    this.house.hand.isDealerPlaying = true;
-    this.houseTurn();
-  }
+userStand() {
+  this.isUsersTurn = false;
+  this.postUserTurn();
+  this.house.hand.isDealerPlaying = true;
+  this.houseTurn();
+}
 
-  houseTurn() {
+houseTurn() {
+  this.interface.hydrate(this.players, this.house, this.house);
+  if (this.house.hand.getSum() > 21) {
+    // If house busts
+    this.interface.win(this.players[this.posAtTable].hand.getSum(), this.house.hand.getSum());
+    this.players[this.posAtTable].betWin();
+  } else if (this.house.hand.getSum() < 17 || (this.house.hand.getSum() == 17 && this.house.hand.aces > 0)) {
+    // If house can still hit (<17 or soft 17)
+    this.house.hand.addCard(this.shoe.popRandomCard());
     this.interface.hydrate(this.players, this.house, this.house);
-    if (this.house.hand.getSum() > 21) {
-      // If house busts
-      this.interface.win(this.players[this.posAtTable].hand.getSum(), this.house.hand.getSum());
-      this.players[this.posAtTable].betWin();
-    } else if (this.house.hand.getSum() < 17 || (this.house.hand.getSum() == 17 && this.house.hand.aces > 0)) {
-      // If house can still hit (<17 or soft 17)
-      this.house.hand.addCard(this.shoe.popRandomCard());
-      this.interface.hydrate(this.players, this.house, this.house);
-      this.houseTurn();
-    } else if (this.house.hand.getSum() > this.players[this.posAtTable].hand.getSum()) {
-      // if the house's hand is greater
-      this.interface.lose(this.players[this.posAtTable].hand.getSum(), this.house.hand.getSum());
-      this.players[this.posAtTable].betLose();
-    } else if (this.house.hand.getSum() == this.players[this.posAtTable].hand.getSum()) {
-      // If house's hand is equal to player's hand.
-      this.players[this.posAtTable].betPush();
-    } else {
-      this.interface.win(this.players[this.posAtTable].hand.getSum(), this.house.hand.getSum());
-      this.players[this.posAtTable].betWin();
-    }
+    this.houseTurn();
+  } else if (this.house.hand.getSum() > this.players[this.posAtTable].hand.getSum()) {
+    // if the house's hand is greater
+    this.interface.lose(this.players[this.posAtTable].hand.getSum(), this.house.hand.getSum());
+    this.players[this.posAtTable].betLose();
+  } else if (this.house.hand.getSum() == this.players[this.posAtTable].hand.getSum()) {
+    // If house's hand is equal to player's hand.
+    this.players[this.posAtTable].betPush();
+  } else {
+    this.interface.win(this.players[this.posAtTable].hand.getSum(), this.house.hand.getSum());
+    this.players[this.posAtTable].betWin();
   }
+}
 
 
-  count() {
-    this.interface.count();
-  }
+count() {
+  this.interface.count();
+}
 }
