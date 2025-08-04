@@ -32,6 +32,16 @@ export class Interface {
   `;
   }
 
+  // Grabs the values "numofCount", "PlayersCount", and "StartingBalance" from the DOM.
+  startScreenGetValues() {
+    let output = {
+      "numOfDecks": document.getElementById("gameSettingsDeckCount").value,
+      "numOfPlayers": document.getElementById("gameSettingsPlayersCount").value,
+      "startingBalance": document.getElementById("gameSettingsStartingBalance").value
+    };
+    return output;
+  }
+
   gameScreen(players) {
     let playersarea = "";
     let floatdirection = "left";
