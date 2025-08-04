@@ -23,6 +23,7 @@
                 <menu class="no-wrap right">
                     <li><a href="/"><i>home</i>Home</a></li>
                     <li><a href="/settings"><i>settings</i>Settings</a></li>
+                    <li><a href="/credits"><i>history_edu</i>Credits</a></li>
                 </menu>
             </button>
             <h6 class="max center-align">Blackjack</h6>
