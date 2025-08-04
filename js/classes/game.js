@@ -28,7 +28,7 @@ export class Game {
     // Puts the user into a random position in the players[] list.
     this.posAtTable = Math.round(Math.random() * this.players.length);
     this.players.splice(this.posAtTable, 0, new Player("You", this.startingBalance, false));
-    this.interface.betScreen();
+    this.interface.betScreen(this.players[this.posAtTable]);
   }
 
   // This collects the bet for that round, checks the size, and calls startRound().
