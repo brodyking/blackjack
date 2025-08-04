@@ -114,10 +114,10 @@ export class Game {
   }
 
   userDoubleDown() {
-    if (this.players[this.posAtTable].bet > this.players[this.posAtTable].balance) {
+    if (parseInt(this.players[this.posAtTable].bet) > parseInt(this.players[this.posAtTable].balance)) {
       // If bet is bigger than balance
       this.interface.showError("You cannot bet more than you balance.");
-    } else if (this.players[this.posAtTable].hasHit == true) {
+    } else if (this.players[this.posAtTable].hand.cards.length > 2) {
       // If hit before double down
       this.interface.showError("You cannot double down after hitting.");
     } else if (this.players[this.posAtTable].isDoubleDown != false) {
@@ -127,7 +127,11 @@ export class Game {
       // Allowed to double down
       this.players[this.posAtTable].doubleDown();
       this.players[this.posAtTable].hand.addCard(this.shoe.popRandomCard());
-      this.userStand();
+      if (this.players[this.posAtTable].hand.getSum() > 21) {
+        this.interface.bust(this.players[this.posAtTable].hand.getSum(), this.house.hand.getSum());
+      } else {
+        this.userStand();
+      }
     }
   }
 
