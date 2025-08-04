@@ -26,6 +26,8 @@ export class Game {
     }
 
     // Puts the user into a random position in the players[] list.
+    // this.posAtTable is used lots, as it gets to location of the user
+    // If you call this.players[this.posAtTable] you can get the users Player obj
     this.posAtTable = Math.round(Math.random() * this.players.length);
     this.players.splice(this.posAtTable, 0, new Player("You", this.startingBalance, false));
     this.interface.betScreen(this.players[this.posAtTable]);
