@@ -34,8 +34,6 @@ export class Game {
   // This collects the bet for that round, checks the size, and calls startRound().
   initRound() {
     let betScreenValues = this.interface.betScreenGetValues();
-    console.log(parseInt(betScreenValues.betAmount));
-    console.log(parseInt(this.players[this.posAtTable].balance));
     if (parseInt(betScreenValues.betAmount) > parseInt(this.players[this.posAtTable].balance)) {
       this.interface.showError("You cannot bet more than you balance.");
     } else {
@@ -129,8 +127,8 @@ export class Game {
 
   userStand() {
     this.isUsersTurn = false;
-    this.house.hand.isDealerPlaying = true;
     this.postUserTurn();
+    this.house.hand.isDealerPlaying = true;
     this.houseTurn();
   }
 
@@ -138,8 +136,8 @@ export class Game {
     this.interface.hydrate(this.players, this.house, this.house);
     if (this.house.hand.getSum() > 21) {
       // If house busts
-      this.players[this.posAtTable].betWin();
       this.interface.win(this.players[this.posAtTable].hand.getSum(), this.house.hand.getSum());
+      this.players[this.posAtTable].betWin();
     } else if (this.house.hand.getSum() < 17 || (this.house.hand.getSum() == 17 && this.house.hand.aces > 0)) {
       // If house can still hit (<17 or soft 17)
       this.house.hand.addCard(this.shoe.popRandomCard());
@@ -147,14 +145,19 @@ export class Game {
       this.houseTurn();
     } else if (this.house.hand.getSum() > this.players[this.posAtTable].hand.getSum()) {
       // if the house's hand is greater
-      this.players[this.posAtTable].betLose();
       this.interface.lose(this.players[this.posAtTable].hand.getSum(), this.house.hand.getSum());
+      this.players[this.posAtTable].betLose();
     } else if (this.house.hand.getSum() == this.players[this.posAtTable].hand.getSum()) {
       // If house's hand is equal to player's hand.
       this.players[this.posAtTable].betPush();
     } else {
-      this.players[this.posAtTable].betWin();
       this.interface.win(this.players[this.posAtTable].hand.getSum(), this.house.hand.getSum());
+      this.players[this.posAtTable].betWin();
     }
+  }
+
+
+  count() {
+    this.interface.count();
   }
 }
