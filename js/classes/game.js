@@ -123,11 +123,12 @@ export class Game {
     } else if (this.players[this.posAtTable].isDoubleDown != false) {
       // Already doubled down
       this.interface.showError("You already doubled down.");
-    } else
+    } else {
       // Allowed to double down
       this.players[this.posAtTable].doubleDown();
-    this.players[this.posAtTable].hand.addCard(this.shoe.popRandomCard());
-    this.userStand();
+      this.players[this.posAtTable].hand.addCard(this.shoe.popRandomCard());
+      this.userStand();
+    }
   }
 
 
