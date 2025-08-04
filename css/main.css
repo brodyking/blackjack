@@ -59,4 +59,14 @@ dialog {
   .nomobile {
     display: none !important;
   }
+
+  .mobile-toolbar {
+    display: block !important;
+    margin: auto !important;
+    text-align: center !important;
+  }
+
+  .mobile-toolbar>i {
+    margin: auto !important;
+  }
 }

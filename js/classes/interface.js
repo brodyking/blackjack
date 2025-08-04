@@ -6,39 +6,94 @@ export class Interface {
 
   startScreen() {
     this.dom.innerHTML = `
-    <fieldset style="padding-bottom:0px;">
-      <legend>How many decks?</legend>
-      <div class="field border">
-        <input type="number" id="gameSettingsDeckCount" value="4">
-      </div>    
-    </fieldset>
-    <fieldset style="padding-bottom:0px;">
-      <legend>How many Players?</legend>
-        <div class="field border">
-        <input type="number" id="gameSettingsPlayersCount" value="4">
-      </div>
-    </fieldset>
-    <fieldset style="padding-bottom:0px;">
-      <legend>What is the starting balance?</legend>
-        <div class="field border">
-        <input type="number" id="gameSettingsStartingBalance" value="4">
-      </div>
-    </fieldset>
+
+<fieldset>
+  <legend>Game Settings</legend>
+  <div class="field border prefix label">
+    <i>attach_money</i>
+    <input type="number" id="gameSettingsStartingBalance" value="100">
+    <label>Starting Balance</label>
+  </div>
+  <div class="field border label">
+    <select id="gameSettingsPlayerCount">
+      <option value="0">Singleplayer</option>
+      <option value="1">1 Bot</option>
+      <option value="2">2 Bots</option>
+      <option value="3">3 Bots</option>
+      <option value="4">4 Bots</option>
+      <option value="5">5 Bots</option>
+      <option value="6">6 Bots</option>
+    </select>
+    <label>Bots</label>
+  </div>
+  <div class="field border label">
+    <select id="gameSettingsDeckCount">
+      <option value="1">1 Deck</option>
+      <option value="2">2 Decks</option>
+      <option value="3">3 Decks</option>
+      <option value="4">4 Decks</option>
+      <option value="5">5 Decks</option>
+      <option value="6">6 Decks</option>
+      <option value="7">7 Decks</option>
+      <option value="8" selected>8 Decks</option>
+    </select>
+    <label>Deck Count</label>
+  </div>
+  <div class="field border label">
     <div class="space"></div>
-    <button class="responsive" onclick="window.game.startGame();">
-      <i>play_arrow</i>
-      <span>Start game</span>
-    </button>
+      <button class="responsive" onclick="window.game.initGame();">
+        <i>play_arrow</i>
+        <span>Start game</span>
+      </button>
+    </div>
+  </fieldset>
   `;
+    document.getElementById("gameSettingsStartingBalance").focus();
   }
 
   // Grabs the values "numofCount", "PlayersCount", and "StartingBalance" from the DOM.
   startScreenGetValues() {
     let output = {
       "numOfDecks": document.getElementById("gameSettingsDeckCount").value,
-      "numOfPlayers": document.getElementById("gameSettingsPlayersCount").value,
+      "numOfPlayers": document.getElementById("gameSettingsPlayerCount").value,
       "startingBalance": document.getElementById("gameSettingsStartingBalance").value
     };
+    return output;
+  }
+
+
+
+  betScreen() {
+    this.dom.innerHTML = `
+    <article class="medium middle-align center-align">
+      <div><i class="extra">poker_chip</i>
+      <div class="space"></div>
+      <legend>How much would you like to bet?</legend>
+      <div class="field border prefix">
+        <i>attach_money</i>
+        <input type="number" id="gameBetAmount" value="25">
+      </div>    
+    <div class="space"></div>
+    <button class="responsive" onclick="window.game.initRound();">
+      <i>play_arrow</i>
+      <span>Start round</span>
+    </button>
+      </div>
+    </article>
+    <dialog id="errorDialog">
+      <div>Error</div>
+      <div id="errorDialogBody"></div>
+      <nav class="right-align no-space">
+        <button onclick="document.getElementById('errorDialog').close();" class="transparent link">Close!</button>
+      </nav>
+    </dialog>  `;
+    document.getElementById("gameBetAmount").focus();
+  }
+
+  betScreenGetValues() {
+    let output = {
+      "betAmount": document.getElementById("gameBetAmount").value
+    }
     return output;
   }
 
@@ -66,21 +121,21 @@ export class Interface {
       </article>
       <nav class="tiny-space actionbar" style="width:100%!important;">
         <nav class="toolbar" style="width:100%!important;">
-          <a onclick="game.userHit()">
-            <i>wrist</i>
-            <div class="nomobile"> Hit</div>
+          <a class="mobile-toolbar" onclick="game.userHit()">
+            <i class="align-center">wrist</i>
+            <div> Hit</div>
           </a>
-          <a>
-            <i>attach_money</i>
-            <div class="nomobile"> Double</div>
+          <a class="mobile-toolbar" onclick="game.userDoubleDown()">
+            <i class="align-center">attach_money</i>
+            <div> Double</div>
           </a>
-          <a onclick="game.userStand()">
-            <i>front_hand</i>
-            <div class="nomobile"> Stand</div>
+          <a class="mobile-toolbar" onclick="game.userStand()">
+            <i class="middle-align">front_hand</i>
+            <div> Stand</div>
           </a>
-          <a onclick="countOpen()">
-            <i>quiz</i>
-            <div class="nomobile">Count</div>
+          <a class="mobile-toolbar" onclick="countOpen()">
+            <i class="middle-align">quiz</i>
+            <div>Count</div>
           </a>
         </nav>
       </nav>
@@ -88,34 +143,41 @@ export class Interface {
         <h5 class="error-text">You busted at <span id="bustDialogScore"></span>.</h5>
         <div class="error-text">You'll get em next time.</div>
                 <nav class="right-align no-space">
-          <button onclick="game.startRound();" class="transparent link">Next Round</button>
+          <button onclick="window.game.interface.betScreen();" class="transparent link">Next Round</button>
         </nav>
       </dialog>
       <dialog id="lossDialog">
         <h5 class="error-text">You lost at <span id="lossDialogScore"></span>.</h5>
         <div>You'll get em next time.</div>
         <nav class="right-align no-space">
-          <button onclick="game.startRound();" class="transparent link">Next Round</button>
+          <button onclick="window.game.interface.betScreen();" class="transparent link">Next Round</button>
         </nav>
       </dialog>
       <dialog id="winDialog">
         <h5 style="color:#8bc34a">You won at <span id="winDialogScore"></span>!</h5>
         <div>Good job!</div>
         <nav class="right-align no-space">
-          <button onclick="game.startRound();" class="transparent link">Next Round</button>
+          <button onclick="window.game.interface.betScreen();" class="transparent link">Next Round</button>
         </nav>
       </dialog>
       <dialog id="blackjackDialog">
         <h5 style="color:#8bc34a">Blackjack!</h5>
         <div>Good job!</div>
         <nav class="right-align no-space">
-          <button onclick="game.startRound();" class="transparent link">Next Round</button>
+          <button onclick="window.game.interface.betScreen();" class="transparent link">Next Round</button>
         </nav>
       </dialog>
       <dialog id="countDialog">
         <div>The current count is <span id="countDialogNumber"></span>.</div>
         <nav class="right-align no-space">
           <button onclick="document.getElementById('countDialog').close();" class="transparent link">Close</button>
+        </nav>
+      </dialog>
+      <dialog id="errorDialog">
+        <div>Error</div>
+        <div id="errorDialogBody"></div>
+        <nav class="right-align no-space">
+          <button onclick="document.getElementById('errorDialog').close();" class="transparent link">Close!</button>
         </nav>
       </dialog>`;
   }
@@ -184,7 +246,8 @@ export class Interface {
   }
 
   showError(errormessage) {
-    console.log(errormessage);
+    document.getElementById("errorDialog").show();
+    document.getElementById("errorDialogBody").innerHTML = errormessage;
   }
 
 }
