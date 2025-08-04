@@ -8,7 +8,7 @@ export class Player {
     this.balance = balance;
     // The plsyers current bet
     this.bet = 0;
-    //
+    // Determines if the hand is made with the dealer param
     this.isDealer = isDealer;
     // The players current hand
     this.hand = new Hand(this.isDealer);
