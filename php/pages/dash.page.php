@@ -48,6 +48,12 @@
                     <span>New Game</span>
                 </button>
             </nav>
+            <nav class="center-align">
+                <button class="responsive border" onclick="window.location.href = '/dev';">
+                    <i>build</i>
+                    <span>Try Dev Version</span>
+                </button>
+            </nav>
         </div>
     </article>
 </body>
