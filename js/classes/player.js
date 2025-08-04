@@ -12,24 +12,36 @@ export class Player {
     this.isDealer = isDealer;
     // The players current hand
     this.hand = new Hand(this.isDealer);
+    // If the hand has been double downed on
+    this.isDoubleDown = false;
+    // If a card has been hit (prevents a double down)
+    this.hasHit = false;
+  }
+  clearBet() {
+    this.bet = 0;
+    this.isDoubleDown = false;
+    this.hasHit = false;
   }
   betPlace(amount) {
-    if (amount > balance) {
-      return false;
-    }
     this.bet = amount;
     this.balance -= amount;
-    return true;
+    this.hasHit = true;
   }
   betWin() {
     this.balance += this.bet * 2;
-    this.bet = 0;
+    this.clearBet();
   }
   betPush() {
     this.balance += this.bet;
-    this.bet = 0;
+    this.clearBet();
   }
   betLose() {
-    this.bet = 0;
+    this.clearBet();
+  }
+  doubleDown() {
+    this.bet = this.bet * 2;
+    this.isDoubleDown = true;
+    this.balance -= this.bet;
   }
 }
+

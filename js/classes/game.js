@@ -7,7 +7,9 @@ export class Game {
     this.interface = new Interface;
   }
 
-  startGame() {
+  // This is ran from a button on the startScreen inside of interface
+  // It sets almost all aspects of the game besides the players current hands
+  initGame() {
     let startScreenValues = this.interface.startScreenGetValues();
     this.numOfDecks = startScreenValues.numOfDecks;
     this.numOfPlayers = startScreenValues.numOfPlayers;
@@ -26,7 +28,20 @@ export class Game {
     // Puts the user into a random position in the players[] list.
     this.posAtTable = Math.round(Math.random() * this.players.length);
     this.players.splice(this.posAtTable, 0, new Player("You", this.startingBalance, false));
-    this.startRound();
+    this.interface.betScreen();
+  }
+
+  // This collects the bet for that round, checks the size, and calls startRound().
+  initRound() {
+    let betScreenValues = this.interface.betScreenGetValues();
+    console.log(parseInt(betScreenValues.betAmount));
+    console.log(parseInt(this.players[this.posAtTable].balance));
+    if (parseInt(betScreenValues.betAmount) > parseInt(this.players[this.posAtTable].balance)) {
+      this.interface.showError("You cannot bet more than you balance.");
+    } else {
+      this.players[this.posAtTable].betPlace(parseInt(betScreenValues.betAmount));
+      this.startRound();
+    }
   }
 
   startRound() {
@@ -92,9 +107,23 @@ export class Game {
       this.interface.hydrate(this.players, this.house, this.players[this.posAtTable]);
       if (this.players[this.posAtTable].hand.getSum() > 21) {
         this.interface.bust(this.players[this.posAtTable].hand.getSum(), this.house.hand.getSum());
+        this.players[this.posAtTable].betLose();
       } else if (this.players[this.posAtTable].hand.getSum() == 21) {
         this.interface.blackjack();
+        this.players[this.posAtTable].betWin();
       }
+    }
+  }
+
+  userDoubleDown() {
+    if (this.players[this.posAtTable].isDoubleDown == false) {
+      this.players[this.posAtTable].doubleDown();
+      this.players[this.posAtTable].hand.addCard(this.shoe.popRandomCard());
+      this.userStand();
+    } else if (this.players[this.posAtTable].hasHit == true) {
+      this.interface.showError("You cannot double down after hitting.");
+    } else {
+      this.interface.showError("You already doubled down.");
     }
   }
 
@@ -108,14 +137,23 @@ export class Game {
   houseTurn() {
     this.interface.hydrate(this.players, this.house, this.house);
     if (this.house.hand.getSum() > 21) {
+      // If house busts
+      this.players[this.posAtTable].betWin();
       this.interface.win(this.players[this.posAtTable].hand.getSum(), this.house.hand.getSum());
     } else if (this.house.hand.getSum() < 17 || (this.house.hand.getSum() == 17 && this.house.hand.aces > 0)) {
+      // If house can still hit (<17 or soft 17)
       this.house.hand.addCard(this.shoe.popRandomCard());
       this.interface.hydrate(this.players, this.house, this.house);
       this.houseTurn();
     } else if (this.house.hand.getSum() > this.players[this.posAtTable].hand.getSum()) {
+      // if the house's hand is greater
+      this.players[this.posAtTable].betLose();
       this.interface.lose(this.players[this.posAtTable].hand.getSum(), this.house.hand.getSum());
+    } else if (this.house.hand.getSum() == this.players[this.posAtTable].hand.getSum()) {
+      // If house's hand is equal to player's hand.
+      this.players[this.posAtTable].betPush();
     } else {
+      this.players[this.posAtTable].betWin();
       this.interface.win(this.players[this.posAtTable].hand.getSum(), this.house.hand.getSum());
     }
   }
