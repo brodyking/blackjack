@@ -53,8 +53,8 @@ dialog {
 @media only screen and (max-width : 795px) {
   .actionbar {
     margin-top: 0px !important;
-    position: absolute !important;
-    bottom: 100px;
+    position: sticky !important;
+    bottom: 0px;
   }
 
   .actionbar>.toolbar {
