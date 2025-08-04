@@ -14,19 +14,15 @@ export class Player {
     this.hand = new Hand(this.isDealer);
     // If the hand has been double downed on
     this.isDoubleDown = false;
-    // If a card has been hit (prevents a double down)
-    this.hasHit = false;
   }
   clearBet() {
     this.bet = 0;
     this.isDoubleDown = false;
-    this.hasHit = false;
     this.hand.clear()
   }
   betPlace(amount) {
     this.bet = amount;
     this.balance -= amount;
-    this.hasHit = true;
   }
   betWin() {
     this.balance += this.bet * 2;
