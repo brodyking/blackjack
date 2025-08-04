@@ -133,12 +133,14 @@ export class Interface {
             <i class="middle-align">front_hand</i>
             <div> Stand</div>
           </a>
-          <a class="mobile-toolbar" onclick="countOpen()">
+          <a class="mobile-toolbar" onclick="game.count()">
             <i class="middle-align">quiz</i>
             <div>Count</div>
           </a>
         </nav>
       </nav>
+
+      <!-- Bust Dialog -->
       <dialog id="bustDialog">
         <h5 class="error-text">You busted at <span id="bustDialogScore"></span>.</h5>
         <div class="error-text">You'll get em next time.</div>
@@ -146,6 +148,8 @@ export class Interface {
           <button onclick="window.game.interface.betScreen();" class="transparent link">Next Round</button>
         </nav>
       </dialog>
+
+      <!-- Loss Dialog -->
       <dialog id="lossDialog">
         <h5 class="error-text">You lost at <span id="lossDialogScore"></span>.</h5>
         <div>You'll get em next time.</div>
@@ -153,6 +157,8 @@ export class Interface {
           <button onclick="window.game.interface.betScreen();" class="transparent link">Next Round</button>
         </nav>
       </dialog>
+
+      <!-- Win Dialog -->
       <dialog id="winDialog">
         <h5 style="color:#8bc34a">You won at <span id="winDialogScore"></span>!</h5>
         <div>Good job!</div>
@@ -160,6 +166,8 @@ export class Interface {
           <button onclick="window.game.interface.betScreen();" class="transparent link">Next Round</button>
         </nav>
       </dialog>
+
+      <!-- Blackjack Dialog -->
       <dialog id="blackjackDialog">
         <h5 style="color:#8bc34a">Blackjack!</h5>
         <div>Good job!</div>
@@ -167,12 +175,16 @@ export class Interface {
           <button onclick="window.game.interface.betScreen();" class="transparent link">Next Round</button>
         </nav>
       </dialog>
+
+      <!-- Count Dialog -->
       <dialog id="countDialog">
         <div>The current count is <span id="countDialogNumber"></span>.</div>
         <nav class="right-align no-space">
           <button onclick="document.getElementById('countDialog').close();" class="transparent link">Close</button>
         </nav>
       </dialog>
+
+      <!-- Error Dialog -->
       <dialog id="errorDialog">
         <div>Error</div>
         <div id="errorDialogBody"></div>
@@ -241,8 +253,17 @@ export class Interface {
     document.getElementById("winDialogScore").innerHTML = playerSum + " - " + houseSum;
   }
 
+  win(playerSum, houseSum) {
+    document.getElementById("winDialog").show();
+    document.getElementById("winDialogScore").innerHTML = playerSum + " - " + houseSum;
+  }
+
   blackjack() {
     document.getElementById("blackjackDialog").show();
+  }
+
+  count() {
+    document.getElementById("countDialog").show();
   }
 
   showError(errormessage) {
