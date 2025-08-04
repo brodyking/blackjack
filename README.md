@@ -17,9 +17,7 @@ Clone the repo
 git clone https://github.com/brodyking/blackjack.git
 ```
 
-Start an apache server with `mod_rewrite` enabled.
-
-Set the webserver to the root directory of the project.
+Start an apache server with `mod_rewrite` enabled at the root directory of the project.
 
 ## Roadmap
 
