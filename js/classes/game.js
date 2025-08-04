@@ -7,17 +7,18 @@ export class Game {
     this.interface = new Interface;
   }
 
-  startGame(numOfDecks, numOfPlayers, startingBalance) {
-    this.numOfDecks = document.getElementById("gameSettingsDeckCount").value;
-    this.numOfPlayers = document.getElementById("gameSettingsPlayersCount").value;
-    this.startingBalance = document.getElementById("gameSettingsStartingBalance").value;
+  startGame() {
+    let startScreenValues = this.interface.startScreenGetValues();
+    this.numOfDecks = startScreenValues.numOfDecks;
+    this.numOfPlayers = startScreenValues.numOfPlayers;
+    this.startingBalance = startScreenValues.startingBalance;
 
     this.shoe = new Shoe(this.numOfDecks);
     this.players = [];
     this.house = new Player("House", Infinity, true);
     this.isUsersTurn = false; // Used to determine if the user is allowed to bet, stand, etc
 
-    for (let i = 0; i < numOfPlayers; i++) {
+    for (let i = 0; i < this.numOfPlayers; i++) {
       // Adds a new player, gives it the name "Player" and the number player it is.
       this.players.push(new Player("Player " + (this.players.length + 1), this.startingBalance, false));
     }
