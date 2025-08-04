@@ -27,8 +27,7 @@
     </header>
     <div id="gameBody">
     </div>
-    <script src="/js/classes.js"></script>
-    <script src="/js/game.js"></script>
+    <script type="module" src="/js/main.js"></script>
 </body>
 
 </html>

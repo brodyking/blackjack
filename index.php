@@ -16,8 +16,7 @@ $routes = [
     "withAuth" => [
         "/" => "/php/pages/dash.page.php",
         "/settings" => "/php/pages/settings.page.php",
-        "/play" => "/php/pages/play.page.php",
-        "/dev" => "/php/pages/dev.page.php"
+        "/play" => "/php/pages/play.page.php"
     ],
     "global" => [
         "/api/usr/register" => "/php/api/usr/register.api.php",
