@@ -42,6 +42,13 @@
             </li>
         </ul>
     </article>
+    <article class="medium middle-align center-align">
+        <div><i class="extra">code</i>
+            <h5>Checkout our GitHub repo</h5>
+            <div class="space"></div>
+            <nav class="center-align"><button onclick="window.location.href = 'https://github.com/brodyking/blackjack';">Goto GitHub</button></nav>
+        </div>
+    </article>
 </body>
 
 </html>
