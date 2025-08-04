@@ -13,6 +13,7 @@ export class Hand {
     this.cards = [];
     this.aces = 0;
     this.sum = 0;
+    this.isDealerPlaying = false;
   }
 
   // addCard adds the card to the cards array, then checks if it is an ace.
