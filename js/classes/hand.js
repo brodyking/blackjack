@@ -35,6 +35,7 @@ export class Hand {
   removeCard(card) {
     for (let i = 0; i < this.cards.length; i++) {
       if (this.cards[i] == card) {
+        this.sum -= card.getValue();
         this.cards.splice(i, 1);
         return true;
       }
