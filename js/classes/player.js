@@ -35,20 +35,24 @@ export class Player {
     }
     return false;
   }
-
   // Splits the two hands, doubles the bet
   handSplit() {
-    if (this.hands[this.currentHand].isSplitable) {
+    if (this.hands[this.currentHand].isSplitable()) {
       // Creates new hand, gives it the second card on the first hand
-      this.hands[this.currentHand + 1] = new Hand(this.isDealer);
-      this.hands[this.currentHand + 1].addCard(this.hands[this.currentHand].cards[1]);
-      // Removes the second card on the first hand
+      let nextHand = new Hand(this.isDealer);
+      nextHand.addCard(this.hands[this.currentHand].cards[1]);
+      this.hands.push(nextHand);
+      // Remove second card on the first hand, give new card
       this.hands[this.currentHand].removeCard(this.hands[this.currentHand].cards[1]);
       // Doubles the bet
       this.bet = this.bet * 2;
       return true
     }
     return false;
+  }
+
+  handIsSplit() {
+    return (this.hands.length > 1);
   }
   handIsSplitable() {
     return this.hands[this.currentHand].isSplitable();
@@ -86,7 +90,9 @@ export class Player {
   handCards() {
     return this.hands[this.currentHand].cards;
   }
-
+  handLength() {
+    return this.hands[this.currentHand].cards.length;
+  }
   clearBet() {
     this.bet = 0;
     this.isDoubleDown = false;
