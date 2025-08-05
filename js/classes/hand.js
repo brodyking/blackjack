@@ -29,6 +29,19 @@ export class Hand {
     }
   }
 
+  // removeCard finds the card in the array and removes it.
+  // Returns true if the card was found and removed
+  // Retruns false if the card isnt in the hand.
+  removeCard(card) {
+    for (let i = 0; i < this.cards.length; i++) {
+      if (this.cards[i] == card) {
+        this.cards.splice(i, 1);
+        return true;
+      }
+    }
+    return false;
+  }
+
   checkAce() {
     if (this.aces > 0 && this.sum > 21) {
       this.sum -= 10;
@@ -46,6 +59,15 @@ export class Hand {
       return this.cards[1].getValue();
     } else {
       return this.sum;
+    }
+  }
+
+  // Returns true if both cards in the hand are of the same value
+  isSplitable() {
+    if (this.cards.length !== 2) {
+      return false;
+    } else {
+      return (this.cards[0].getValue() == this.cards[1].getValue());
     }
   }
 
