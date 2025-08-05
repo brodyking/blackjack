@@ -117,13 +117,17 @@ export class Interface {
       </article>
       <nav class="tiny-space actionbar" style="width:100%!important;">
         <nav class="toolbar" style="width:100%!important;">
-          <a class="mobile-toolbar" onclick="game.userHit()">
+          <a class="mobile-toolbar" id="toolbarHit">
             <i class="align-center">wrist</i>
             <div> Hit</div>
           </a>
           <a class="mobile-toolbar" onclick="game.userDoubleDown()">
             <i class="align-center">attach_money</i>
             <div> Double</div>
+          </a>
+          <a class="mobile-toolbar" onclick="game.userSplit()">
+            <i class="align-center">call_split</i>
+            <div> Split</div>
           </a>
           <a class="mobile-toolbar" onclick="game.userStand()">
             <i class="middle-align">front_hand</i>
@@ -197,35 +201,15 @@ export class Interface {
       } else {
         document.getElementById("house-box").classList.remove("primary-border");
       }
-      document.getElementById(player.name + "-hand").innerHTML = player.hand.toString();
+      document.getElementById(player.name + "-hand").innerHTML = "";
+      player.hands.forEach((hand) => {
+        document.getElementById(player.name + "-hand").innerHTML += player.handToString() + "<br>";
+      })
       document.getElementById(player.name + "-balance").innerHTML = " ($" + player.balance + ")";
-      document.getElementById(player.name + "-sum").innerHTML = " (" + player.hand.getSum() + ")";
+      document.getElementById(player.name + "-sum").innerHTML = " (" + player.handGetSum() + ")";
     });
-    document.getElementById("house-hand").innerHTML = house.hand.toString();
-    document.getElementById("house-sum").innerHTML = " (" + house.hand.getSum() + ")";
-    // document.getElementById("playerHand").innerHTML = currentHand["player"]["toString"];
-    // document.getElementById("playerHandSum").innerHTML = currentHand["player"]["sum"];
-    // if (currentHand["house"]["cards"].length > 1) {
-    //   if (currentHand["isaction"]) {
-    //     document.getElementById("houseHand").innerHTML = `<span class="pcard-back"></span>` + currentHand["house"]["cards"][1].toString();
-    //     document.getElementById("houseHandSum").innerHTML = currentHand["house"]["cards"][1].getValue();
-    //   } else {
-    //     document.getElementById("houseHand").innerHTML = currentHand["house"]["toString"];
-    //     document.getElementById("houseHandSum").innerHTML = currentHand["house"]["sum"];
-    //   }
-    // }
-    // if (currentHand["player"]["sum"] > 21) {
-    //   if (currentHand["player"]["acesUsed"] > 0) {
-    //     currentHand["player"]["sum"] -= 10;
-    //     currentHand["player"]["acesUsed"]--;
-    //     hydrate();
-    //   } else {
-    //     bust();
-    //   }
-    // }
-    // if (currentHand["player"]["sum"] == 21) {
-    //   win();
-    // }
+    document.getElementById("house-hand").innerHTML = house.handToString();
+    document.getElementById("house-sum").innerHTML = " (" + house.handGetSum() + ")";
   }
 
   bust(playerSum, houseSum) {
