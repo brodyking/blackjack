@@ -10,4 +10,4 @@
 
 # Changes made
 
-- Removed the "onclick" in the interface. This will be required on the interface rewrite.
+- Removed the "onclick" in the interface. This will be required on the interface rewrite. It is better to use events inside of the game class.
