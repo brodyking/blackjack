@@ -97,17 +97,19 @@ export class Interface {
     let playersarea = "";
     let floatdirection = "left";
     players.forEach((player) => {
-      playersarea += `
+      player.hands.forEach((hand) => {
+        playersarea += `
       <article class="border" id="`+ player.name + `-box" style="float:` + floatdirection + `;display:block;text-align:` + floatdirection + `;margin-top:5px;">
         <h5>` + player.name + `<span style="color: #4caf50;" id="` + player.name + `-balance"></span></h5>
         <span id="`+ player.name + `-hand"></span>
         <h5 style="text-align:center;margin:0px;" id="` + player.name + `-sum"></h5>
         </article>`
-      if (floatdirection == "left") {
-        floatdirection = "right";
-      } else {
-        floatdirection = "left";
-      }
+        if (floatdirection == "left") {
+          floatdirection = "right";
+        } else {
+          floatdirection = "left";
+        }
+      })
     });
     this.dom.innerHTML = playersarea +
       `<article class="border" style="float:` + floatdirection + `;display:block;text-align:left;margin-top:5px;" id="house-box">
@@ -121,19 +123,19 @@ export class Interface {
             <i class="align-center">wrist</i>
             <div> Hit</div>
           </a>
-          <a class="mobile-toolbar" onclick="game.userDoubleDown()">
+          <a class="mobile-toolbar" id="toolbarDoubleDown">
             <i class="align-center">attach_money</i>
             <div> Double</div>
           </a>
-          <a class="mobile-toolbar" onclick="game.userSplit()">
+          <a class="mobile-toolbar" id="toolbarSplit">
             <i class="align-center">call_split</i>
             <div> Split</div>
           </a>
-          <a class="mobile-toolbar" onclick="game.userStand()">
+          <a class="mobile-toolbar" id="toolbarStand">
             <i class="middle-align">front_hand</i>
             <div> Stand</div>
           </a>
-          <a class="mobile-toolbar" onclick="game.count()">
+          <a class="mobile-toolbar" id="toolbarCount">
             <i class="middle-align">quiz</i>
             <div>Count</div>
           </a>
@@ -203,7 +205,7 @@ export class Interface {
       }
       document.getElementById(player.name + "-hand").innerHTML = "";
       player.hands.forEach((hand) => {
-        document.getElementById(player.name + "-hand").innerHTML += player.handToString() + "<br>";
+        document.getElementById(player.name + "-hand").innerHTML += hand.toString() + "<br>";
       })
       document.getElementById(player.name + "-balance").innerHTML = " ($" + player.balance + ")";
       document.getElementById(player.name + "-sum").innerHTML = " (" + player.handGetSum() + ")";
