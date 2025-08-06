@@ -62,7 +62,8 @@ export class Game {
     this.interface.gameScreen(this.players);
 
     // Run the Bots before the user
-    this.preUserTurn();
+
+    this.gameLoop();
 
     if (this.players[this.posAtTable].handGetSum() == 21) {
       this.interface.blackjack();
@@ -70,144 +71,134 @@ export class Game {
 
   }
 
-  // Loops through all of the CPU players before the user.
-  preUserTurn() {
-    // Loop through each player, and then stop at the users locatiion.
+  gameLoop() {
+
+    // If it is the users turn
+    let isUsersTurn = false;
+    // Is the round still active
+    // If player gets blackjack on deal or busts
+    let isRoundActive = true;
+
+    const hit = () => {
+      // If it is the user playing
+      if (isUsersTurn) {
+        // Gives the player a card
+        this.players[this.posAtTable].handAddCard(this.shoe.popRandomCard());
+        // Updates interface
+        this.interface.hydrate(this.players, this.house, this.players[this.posAtTable]);
+        // Checking for a blackjack
+        if (this.players[this.posAtTable].handIsBlackjack()) {
+          // If hand is split and another hand can be played, move to next hand
+          // If not split, it will simply goto the dealer
+          if (!this.players[this.posAtTable].handNext()) {
+            houseTurn();
+          }
+        } else if (this.players[this.posAtTable].handIsBust()) {
+          // Checking for a bust.
+          // If not split, it will simply goto the dealer
+          if (!this.players[this.posAtTable].handNext()) {
+            houseTurn();
+          }
+        }
+      } else {
+        // This is where the other CPU players actions will go.
+      }
+    }
+
+    const doubleDown = () => {
+      if (isUsersTurn) {
+        // Gives the player a new card
+        this.players[this.posAtTable].handAddCard(this.shoe.popRandomCard());
+        // Sets it as a double down
+        this.players[this.posAtTable].doubleDown();
+        // Redraw screen
+        this.interface.hydrate(this.players, this.house, this.players[this.posAtTable]);
+        // Next hand if split
+        if (!this.players[this.posAtTable].handNext()) {
+          houseTurn();
+        }
+      }
+    }
+
+    const split = () => {
+      if (isUsersTurn) {
+        if (this.players[this.posAtTable].handIsSplitable()) {
+          this.players[this.posAtTable].handSplit();
+          this.interface.hydrate(this.players, this.house, this.players[this.posAtTable]);
+        } else {
+          this.interface.showError("You must have 2 cards of the same value to split");
+        }
+      }
+    }
+
+    const stand = () => {
+
+      if (isUsersTurn) {
+
+        if (this.players[this.posAtTable].handHasNext()) {
+          this.players[this.posAtTable].handNext();
+        } else {
+          isUsersTurn = false
+          console.log(isUsersTurn);
+          houseTurn();
+        }
+
+      }
+    }
+
+    const houseTurn = () => {
+      if (!isUsersTurn) {
+
+        // Finish the players after you at the table.
+        if (this.posAtTable + 1 < this.players.length) {
+          for (let i = this.posAtTable + 1; i < this.players.length; i++) {
+            let currentPlayer = this.players[i];
+            // This is where the CPUS could make an action
+            this.interface.hydrate(this.players, this.house, currentPlayer);
+          }
+        }
+
+        this.interface.hydrate(this.players, this.house, this.house);
+
+        // If the dealer has less than 17, keep hitting
+        while (this.house.handGetSum < 17 || (this.house.handGetSum <= 17 && this.house.handAces() > 0)) {
+          this.house.hand.handAddCard(shoe.popRandomCard());
+
+        }
+
+      }
+    }
+
+    // Loops through all of the CPU players before the user.
     for (let i = 0; i < this.players.length; i++) {
       let currentPlayer = this.players[i];
+
       // This is where the CPUS could make an action
+
       this.interface.hydrate(this.players, this.house, currentPlayer);
+
       if (currentPlayer.name == "You") {
-        this.isUsersTurn = true;
-
-        // User Hits
-        document.getElementById("toolbarHit").addEventListener("click", function() {
-          game.userHit();
-        });
-
-        // User Stand
-        document.getElementById("toolbarStand").addEventListener("click", function() {
-          game.userStand();
-        });
-
-        // User Double Down
-        document.getElementById("toolbarDoubleDown").addEventListener("click", function() {
-          game.userDoubleDown();
-        });
-
-        // User Split
-        document.getElementById("toolbarSplit").addEventListener("click", function() {
-          game.userSplit();
-        });
-
+        isUsersTurn = true;
         break;
       }
+
     }
-  }
 
-  // Loops through all of the CPU players after the user.
-  postUserTurn() {
-    if (this.posAtTable + 1 < this.players.length) {
-      for (let i = this.posAtTable + 1; i < this.players.length; i++) {
-        let currentPlayer = this.players[i];
-        // This is where the CPUS could make an action
-        this.interface.hydrate(this.players, this.house, currentPlayer);
-      }
-    }
-  }
+    document.getElementById("toolbarHit").addEventListener('click', function() {
+      if (isRoundActive) hit();
+    });
 
+    document.getElementById("toolbarSplit").addEventListener('click', function() {
+      if (isRoundActive) split();
+    });
 
-  userHit() {
-    if (this.isUsersTurn == true) {
-      // Gives a new card to the user, and hydrates the screen
-      this.players[this.posAtTable].handAddCard(this.shoe.popRandomCard());
-      this.interface.hydrate(this.players, this.house, this.players[this.posAtTable]);
-      if (this.players[this.posAtTable].handGetSum() > 21) {
-        this.interface.bust(this.players[this.posAtTable].handGetSum(), this.house.handGetSum());
-        this.players[this.posAtTable].betLose();
-      } else if (this.players[this.posAtTable].handGetSum() == 21) {
-        this.interface.blackjack();
-        this.players[this.posAtTable].betWin();
-      }
-    }
-  }
+    document.getElementById("toolbarDoubleDown").addEventListener('click', function() {
+      if (isRoundActive) doubleDown();
+    });
 
-  userDoubleDown() {
-    if (parseInt(this.players[this.posAtTable].bet) > parseInt(this.players[this.posAtTable].balance)) {
-      // If bet is bigger than balance
-      this.interface.showError("You cannot bet more than you balance.");
-    } else if (this.players[this.posAtTable].handCards.length > 2) {
-      // If hit before double down
-      this.interface.showError("You cannot double down after hitting.");
-    } else if (this.players[this.posAtTable].isDoubleDown != false) {
-      // Already doubled down
-      this.interface.showError("You already doubled down.");
-    } else {
-      // Allowed to double down
-      this.players[this.posAtTable].doubleDown();
-      this.players[this.posAtTable].handAddCard(this.shoe.popRandomCard());
-      if (this.players[this.posAtTable].handGetSum() > 21) {
-        this.interface.bust(this.players[this.posAtTable].handGetSum(), this.house.handGetSum());
-      } else {
-        this.userStand();
-      }
-    }
-  }
+    document.getElementById("toolbarStand").addEventListener('click', function() {
+      if (isRoundActive) stand();
+    });
 
-  userSplit() {
-    if (this.players[this.posAtTable].handIsSplitable()) {
-      this.players[this.posAtTable].handSplit();
-      this.players[this.posAtTable].handAddCard(this.shoe.popRandomCard());
-      this.interface.hydrate(this.players, this.house, this.players[this.posAtTable]);
-      this.interface.showSuccess("You have split your hand.");
-    } else {
-      this.interface.showError("You cannot split your hand if the cards arent the same");
-    }
-  }
-
-  userStand() {
-    if (this.players[this.posAtTable].handIsSplit() && this.players[this.posAtTable].currentHand + 1 < this.players[this.posAtTable].hands.length) {
-      this.players[this.posAtTable].handNext();
-      console.log(this.players[this.posAtTable].handLength());
-      if (this.players[this.posAtTable].handLength() == 1) {
-        this.players[this.posAtTable].handAddCard(this.shoe.popRandomCard());
-      }
-      this.interface.hydrate(this.players, this.house, this.players[this.posAtTable]);
-    } else {
-      this.isUsersTurn = false;
-      this.postUserTurn();
-      this.house.hands[0].isDealerPlaying = true;
-      console.log(this.house.handGetSum());
-      this.houseTurn();
-    }
-  }
-
-  houseTurn() {
-    this.interface.hydrate(this.players, this.house, this.house);
-    if (this.house.handGetSum() > 21) {
-      // If house busts
-      this.interface.win(this.players[this.posAtTable].handGetSum(), this.house.handGetSum());
-      this.players[this.posAtTable].betWin();
-    } else if (this.house.handGetSum() < 17 || (this.house.handGetSum() == 17 && this.house.handAces > 0)) {
-      // If house can still hit (<17 or soft 17)
-      this.house.handAddCard(this.shoe.popRandomCard());
-      this.interface.hydrate(this.players, this.house, this.house);
-      this.houseTurn();
-    } else if (this.house.handGetSum() > this.players[this.posAtTable].handGetSum()) {
-      // if the house's hand is greater
-      this.interface.lose(this.players[this.posAtTable].handGetSum(), this.house.handGetSum());
-      this.players[this.posAtTable].betLose();
-    } else if (this.house.handGetSum() == this.players[this.posAtTable].handGetSum()) {
-      // If house's hand is equal to player's hand.
-      this.players[this.posAtTable].betPush();
-    } else {
-      this.interface.win(this.players[this.posAtTable].handGetSum(), this.house.handGetSum());
-      this.players[this.posAtTable].betWin();
-    }
-  }
-
-
-  count() {
-    this.interface.count();
   }
 }
