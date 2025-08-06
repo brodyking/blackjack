@@ -11,3 +11,30 @@
 # Changes made
 
 - Removed the "onclick" in the interface. This will be required on the interface rewrite. It is better to use events inside of the game class.
+
+# Ideas
+
+this is how i could await a button click when redesigning logic
+
+```javascript
+  function awaitEvent(element, eventType) {
+  return new Promise(resolve => {
+    const handler = (event) => {
+      element.removeEventListener(eventType, handler); // Remove listener after event fires
+      resolve(event); // Resolve the Promise with the event object
+    };
+    element.addEventListener(eventType, handler);
+  });
+}
+
+async function performActionAfterClick() {
+  const button = document.getElementById('myButton');
+  console.log('Waiting for button click...');
+  const clickEvent = await awaitEvent(button, 'click');
+  console.log('Button clicked!', clickEvent);
+  // Perform actions that depend on the click event
+}
+
+// Call the async function to start the process
+performActionAfterClick();
+```
