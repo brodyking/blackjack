@@ -142,38 +142,11 @@ export class Interface {
         </nav>
       </nav>
 
-      <!-- Bust Dialog -->
-      <dialog id="bustDialog">
-        <h5 class="error-text">You busted at <span id="bustDialogScore"></span>.</h5>
-        <div class="error-text">You'll get em next time.</div>
+      <!-- Alert Dialog -->
+      <dialog id="alertDialog">
+        <h5 id="alertDialogHead"></h5>
+        <div id="alertDialogBody"></div>
                 <nav class="right-align no-space">
-          <button onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);" class="transparent link">Next Round</button>
-        </nav>
-      </dialog>
-
-      <!-- Loss Dialog -->
-      <dialog id="lossDialog">
-        <h5 class="error-text">You lost at <span id="lossDialogScore"></span>.</h5>
-        <div>You'll get em next time.</div>
-        <nav class="right-align no-space">
-          <button onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);" class="transparent link">Next Round</button>
-        </nav>
-      </dialog>
-
-      <!-- Win Dialog -->
-      <dialog id="winDialog">
-        <h5 style="color:#8bc34a">You won at <span id="winDialogScore"></span>!</h5>
-        <div>Good job!</div>
-        <nav class="right-align no-space">
-          <button onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);" class="transparent link">Next Round</button>
-        </nav>
-      </dialog>
-
-      <!-- Blackjack Dialog -->
-      <dialog id="blackjackDialog">
-        <h5 style="color:#8bc34a">Blackjack!</h5>
-        <div>Good job!</div>
-        <nav class="right-align no-space">
           <button onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);" class="transparent link">Next Round</button>
         </nav>
       </dialog>
@@ -241,6 +214,12 @@ export class Interface {
 
   count() {
     document.getElementById("countDialog").show();
+  }
+
+  dialog(head, body) {
+    document.getElementById("alertDialogHead").innerHTML = head;
+    document.getElementById("alertDialogBody").innerHTML = body;
+    document.getElementById("alertDialog").show();
   }
 
   showError(message) {
