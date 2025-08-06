@@ -1,3 +1,5 @@
+# LAST THIG YOU DID WAS WORK IN GAME.JS ON HOUSE LOGIC
+
 # Todo for splitting hands
 
 - [x] Multiple hands
