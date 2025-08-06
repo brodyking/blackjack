@@ -7,6 +7,8 @@ export class Hand {
     this.cards = [];
     this.aces = 0;
     this.sum = 0;
+    this.isBust = false;
+    this.isBlackjack = false;
   }
 
   clear() {
@@ -14,6 +16,8 @@ export class Hand {
     this.aces = 0;
     this.sum = 0;
     this.isDealerPlaying = false;
+    this.isBust = false;
+    this.isBlackjack = false;
   }
 
   // addCard adds the card to the cards array, then checks if it is an ace.
@@ -26,6 +30,12 @@ export class Hand {
       this.checkAce();
     } else {
       this.sum += parseInt(card.getValue());
+    }
+    if (this.sum > 21) {
+      this.isBust = true;
+    }
+    if (this.sum == 21) {
+      this.isBlackjack = true;
     }
   }
 
