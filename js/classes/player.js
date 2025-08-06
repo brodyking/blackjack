@@ -35,6 +35,9 @@ export class Player {
     }
     return false;
   }
+  handHasNext() {
+    return (this.currentHand < this.hands.length + 1);
+  }
   // Splits the two hands, doubles the bet
   handSplit() {
     if (this.hands[this.currentHand].isSplitable()) {
@@ -56,6 +59,12 @@ export class Player {
   }
   handIsSplitable() {
     return this.hands[this.currentHand].isSplitable();
+  }
+  handIsBlackjack() {
+    return this.hands[this.currentHand].isBlackjack;
+  }
+  handIsBust() {
+    return this.hands[this.currentHand].isBust;
   }
   handClear() {
     this.hands = [];
