@@ -9,6 +9,7 @@ export class Hand {
     this.sum = 0;
     this.isBust = false;
     this.isBlackjack = false;
+    this.bet = 0;
   }
 
   clear() {
@@ -96,5 +97,4 @@ export class Hand {
       return deckToString;
     }
   }
-
 }
