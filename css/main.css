@@ -31,6 +31,7 @@ article {
   width: 80px !important;
   height: 100px !important;
   margin-top: 20px;
+  border-radius: 0px !important;
 }
 
 #gameBody {
