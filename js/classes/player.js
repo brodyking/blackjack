@@ -6,8 +6,13 @@ export class Player {
     this.name = name;
     // The players balance
     this.balance = balance;
-    // The plsyers current bet
-    this.bet = 0;
+    // The players balance during the game.
+    // Nothing is deducted until after the game,
+    // but while in progress this prevents doubles
+    // that the user/player cannot pay for.
+    this.tempBalance = balance;
+    // The playres initial bet
+    this.betInitial = 0;
     // Determines if the hand is made with the dealer param
     this.isDealer = isDealer;
     // The players "hands"
@@ -16,15 +21,13 @@ export class Player {
     this.hands[0] = new Hand(this.isDealer);
     // The current hand to use when betting,getHand(),etc.
     this.currentHand = 0;
-    // If the hand has been double downed on
+    // If the hand has been double downed
     this.isDoubleDown = false;
   }
-
   // Returns the current hand
   handGet() {
     return this.hands[this.currentHand];
   }
-
   // Moves to the next hand if available.
   // Returns true if a next hand was switched to,
   // Returns false if there was not another hand after.
@@ -36,7 +39,7 @@ export class Player {
     return false;
   }
   handHasNext() {
-    return (this.currentHand < this.hands.length + 1);
+    return (this.currentHand < this.hands.length - 1);
   }
   // Splits the two hands, doubles the bet
   handSplit() {
@@ -48,7 +51,7 @@ export class Player {
       // Remove second card on the first hand, give new card
       this.hands[this.currentHand].removeCard(this.hands[this.currentHand].cards[1]);
       // Doubles the bet
-      this.bet = this.bet * 2;
+      this.hands[this.currentHand + 1].bet = this.betInitial;
       return true
     }
     return false;
@@ -84,7 +87,12 @@ export class Player {
     return this.hands[this.currentHand].toString();
   }
 
-  handIsDealerPlaying() {
+  handIsDealerPlaying(value) {
+    if (value == true) {
+      this.hands[this.currentHand].isDealerPlaying = true;
+    } else if (value == false) {
+      this.hands[this.currentHand].isDealerPlaying = true;
+    }
     return this.hands[this.currentHand].isDealerPlaying;
   }
 
@@ -103,33 +111,21 @@ export class Player {
     return this.hands[this.currentHand].cards.length;
   }
   clearBet() {
-    this.bet = 0;
+    this.tempBalance = this.balance;
+    this.betInitial = 0;
+    this.currentHand = 0;
     this.isDoubleDown = false;
-    this.hands[0].clear();
   }
 
   betPlace(amount) {
-    this.bet = amount;
-    this.balance -= amount;
-  }
-
-  betWin() {
-    this.balance += this.bet * 2;
-    this.clearBet();
-  }
-
-  betPush() {
-    this.balance += this.bet;
-    this.clearBet();
-  }
-
-  betLose() {
-    this.clearBet();
+    if (this.betInitial == 0) this.betInitial = amount
+    this.hands[this.currentHand].bet = parseInt(amount);
+    this.tempBalance -= parseInt(amount);
   }
 
   doubleDown() {
-    this.bet = this.bet * 2;
+    this.hands[this.currentHand].bet = parseInt(this.hands[this.currentHand].bet * 2);
     this.isDoubleDown = true;
-    this.balance -= this.bet;
+    this.tempBalance -= parseInt(this.bet);
   }
 }
