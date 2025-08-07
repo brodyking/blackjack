@@ -95,24 +95,22 @@ export class Interface {
 
   gameScreen(players) {
     let playersarea = "";
-    let floatdirection = "left";
     players.forEach((player) => {
+      let handIndex = 0;
       player.hands.forEach((hand) => {
+        // Ids: box: name-handindex-box
+        //      hand: name-handindex-hand
         playersarea += `
-      <article class="border" id="`+ player.name + `-box" style="float:` + floatdirection + `;display:block;text-align:` + floatdirection + `;margin-top:5px;">
-        <h5>` + player.name + `<span style="color: #4caf50;" id="` + player.name + `-balance"></span></h5>
-        <span id="`+ player.name + `-hand"></span>
-        <h5 style="text-align:center;margin:0px;" id="` + player.name + `-sum"></h5>
+      <article class="border" id="`+ player.name + `-` + handIndex + `-box" style="float:left;display:block;text-align:left;margin-top:5px;">
+        <h5>` + player.name + ` <span style="font-size:15px!important;">Bet: <span id="` + player.name + `-` + handIndex + `-bet"></span></h5>
+        <span id="`+ player.name + `-` + handIndex + `-hand"></span>
+        <h5 style="text-align:center;margin:0px;" id="` + player.name + `-` + handIndex + `-sum"></h5>
         </article>`
-        if (floatdirection == "left") {
-          floatdirection = "right";
-        } else {
-          floatdirection = "left";
-        }
+        handIndex++;
       })
     });
     this.dom.innerHTML = playersarea +
-      `<article class="border" style="float:` + floatdirection + `;display:block;text-align:left;margin-top:5px;" id="house-box">
+      `<article class="border" style="float:right;display:block;text-align:right;margin-top:5px;" id="house-box">
         <h5>House <span id="house-balance"></span></h5>
         <span id="house-hand"></span>
         <h5 style="text-align:center;margin:0px;" id="house-sum"></h5>
@@ -135,10 +133,6 @@ export class Interface {
             <i class="middle-align">front_hand</i>
             <div> Stand</div>
           </a>
-          <a class="mobile-toolbar" id="toolbarCount">
-            <i class="middle-align">quiz</i>
-            <div>Count</div>
-          </a>
         </nav>
       </nav>
 
@@ -147,6 +141,31 @@ export class Interface {
         <h5 id="alertDialogHead"></h5>
         <div id="alertDialogBody"></div>
                 <nav class="right-align no-space">
+          <button onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);" class="transparent link">Next Round</button>
+        </nav>
+      </dialog>
+
+      <!-- Loss Dialog -->
+      <dialog id="lossDialog">
+        <h5 class="error-text">You lost $<span id="lossDialogAmount"></span>.</h5>
+        <div id="lossDialogHands"></div>
+        <nav class="right-align no-space">
+          <button onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);" class="transparent link">Next Round</button>
+        </nav>
+      </dialog>
+
+      <dialog id="winDialog">
+        <h5 style="color:#8bc34a">You won $<span id="winDialogAmount"></span>!</h5>
+        <div id="winDialogHands"></div>
+        <nav class="right-align no-space">
+          <button onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);" class="transparent link">Next Round</button>
+        </nav>
+      </dialog>
+
+      <dialog id="pushDialog">
+        <h5 style="color:#8bc34a">You pushed for $<span id="pushDialogAmount"></span>!</h5>
+        <div id="pushDialogHands"></div>
+        <nav class="right-align no-space">
           <button onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);" class="transparent link">Next Round</button>
         </nav>
       </dialog>
@@ -166,46 +185,76 @@ export class Interface {
 
   hydrate(players, house, activePlayer) {
     players.forEach((player) => {
-      if (activePlayer.name == player.name) {
-        document.getElementById(player.name + "-box").classList.add("primary-border");
-      } else {
-        document.getElementById(player.name + "-box").classList.remove("primary-border");
-      }
+      let handIndex = 0;
+      player.hands.forEach((hand) => {
+        if (activePlayer.name == player.name && player.currentHand == handIndex) {
+          document.getElementById(player.name + "-" + handIndex + "-box").classList.add("primary-border");
+        } else {
+          document.getElementById(player.name + "-" + handIndex + "-box").classList.remove("primary-border");
+        }
+        document.getElementById(player.name + "-" + handIndex + "-hand").innerHTML = player.hands[handIndex].toString();
+        document.getElementById(player.name + "-" + handIndex + "-sum").innerHTML = player.hands[handIndex].getSum();
+        document.getElementById(player.name + "-" + handIndex + "-bet").innerHTML = player.hands[handIndex].bet;
+        if (hand.isBust) {
+          document.getElementById(player.name + "-" + handIndex + "-sum").innerHTML += " - Bust";
+          document.getElementById(player.name + "-" + handIndex + "-sum").classList.add("error-text");
+        } else if (hand.isBlackjack) {
+          document.getElementById(player.name + "-" + handIndex + "-sum").innerHTML += " - Blackjack";
+          document.getElementById(player.name + "-" + handIndex + "-sum").classList.add("primary-text");
+        }
+        handIndex++;
+      });
       if (activePlayer.name == "House") {
         document.getElementById("house-box").classList.add("primary-border");
       } else {
         document.getElementById("house-box").classList.remove("primary-border");
       }
-      document.getElementById(player.name + "-hand").innerHTML = "";
-      player.hands.forEach((hand) => {
-        document.getElementById(player.name + "-hand").innerHTML += hand.toString() + "<br>";
-      })
-      document.getElementById(player.name + "-balance").innerHTML = " ($" + player.balance + ")";
-      document.getElementById(player.name + "-sum").innerHTML = " (" + player.handGetSum() + ")";
     });
     document.getElementById("house-hand").innerHTML = house.handToString();
     document.getElementById("house-sum").innerHTML = " (" + house.handGetSum() + ")";
   }
 
-  bust(playerSum, houseSum) {
-    document.getElementById("bustDialog").show();
-    document.getElementById("bustDialogScore").innerHTML = playerSum + " - " + houseSum;
-  }
-
-
-  lose(playerSum, houseSum) {
+  lose(amount, hands) {
+    document.getElementById("lossDialogAmount").innerHTML = amount;
+    let handsHtml = "<div style='font-size:20px;text-align:center;margin-top:15px!important;'>Your hand(s):</div>";
+    hands.users.forEach((hand) => {
+      handsHtml += "<article class='border'>";
+      handsHtml += hand.toString() + "<br>";
+      handsHtml += "<h5 style='text-align:center;margin:0px;'>" + hand.getSum() + "</h5>";
+      handsHtml += "</article>";
+    });
+    handsHtml += "<div style='font-size:20px;text-align:center;margin-top:10px!important;'>House's hand:</div><article class='border'>" + hands.house.toString() + "<h5 style='text-align:center;margin:0px;'>" + hands.house.getSum() + "</h5></article>";
+    document.getElementById("lossDialogHands").innerHTML = handsHtml;
     document.getElementById("lossDialog").show();
-    document.getElementById("lossDialogScore").innerHTML = playerSum + " - " + houseSum;
   }
 
-  win(playerSum, houseSum) {
+  win(amount, hands) {
+    document.getElementById("winDialogAmount").innerHTML = amount;
+    let handsHtml = "<div style='font-size:20px;text-align:center;margin-top:15px!important;'>Your hand(s):</div>";
+    hands.users.forEach((hand) => {
+      handsHtml += "<article class='border'>";
+      handsHtml += hand.toString() + "<br>";
+      handsHtml += "<h5 style='text-align:center;margin:0px;'>" + hand.getSum() + "</h5>";
+      handsHtml += "</article>";
+    });
+    handsHtml += "<div style='font-size:20px;text-align:center;margin-top:10px!important;'>House's hand:</div><article class='border'>" + hands.house.toString() + "<h5 style='text-align:center;margin:0px;'>" + hands.house.getSum() + "</h5></article>";
+    document.getElementById("winDialogHands").innerHTML = handsHtml;
     document.getElementById("winDialog").show();
-    document.getElementById("winDialogScore").innerHTML = playerSum + " - " + houseSum;
   }
 
-  win(playerSum, houseSum) {
-    document.getElementById("winDialog").show();
-    document.getElementById("winDialogScore").innerHTML = playerSum + " - " + houseSum;
+
+  push(amount, hands) {
+    document.getElementById("pushDialogAmount").innerHTML = amount;
+    let handsHtml = "<div style='font-size:20px;text-align:center;margin-top:15px!important;'>Your hand(s):</div>";
+    hands.users.forEach((hand) => {
+      handsHtml += "<article class='border'>";
+      handsHtml += hand.toString() + "<br>";
+      handsHtml += "<h5 style='text-align:center;margin:0px;'>" + hand.getSum() + "</h5>";
+      handsHtml += "</article>";
+    });
+    handsHtml += "<div style='font-size:20px;text-align:center;margin-top:10px!important;'>House's hand:</div><article class='border'>" + hands.house.toString() + "<h5 style='text-align:center;margin:0px;'>" + hands.house.getSum() + "</h5></article>";
+    document.getElementById("pushDialogHands").innerHTML = handsHtml;
+    document.getElementById("pushDialog").show();
   }
 
   blackjack() {
