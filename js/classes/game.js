@@ -214,22 +214,22 @@ export class Game {
 
         this.players[playerIndex].balance = parseInt(this.players[playerIndex].balance) + parseInt(playersTotalWinnings);
 
-        // If the user is the current player
-        if (this.posAtTable == playerIndex) {
-          let handsToSend = {
-            "users": this.players[this.posAtTable].hands,
-            "house": this.house.hands[0]
-          };
-          if (playersTotalWinnings == 0) {
-            this.interface.push(playersTotalWinnings, handsToSend)
-          } else if (playersTotalWinnings > 0) {
-            this.interface.win(playersTotalWinnings, handsToSend);
-          } else {
-            this.interface.lose(playersTotalWinnings, handsToSend);
-          }
-        }
+
 
       });
+
+      let usersTotalWinnings = this.players[this.posAtTable].balance;
+      let handsToSend = {
+        "users": this.players[this.posAtTable].hands,
+        "house": this.house.hands[0]
+      };
+      if (usersTotalWinnings == 0) {
+        this.interface.push(usersTotalWinnings, handsToSend)
+      } else if (usersTotalWinnings > 0) {
+        this.interface.win(usersTotalWinnings, handsToSend);
+      } else {
+        this.interface.lose(usersTotalWinnings, handsToSend);
+      }
     }
 
     const houseTurn = async () => {
