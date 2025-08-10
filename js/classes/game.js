@@ -84,37 +84,39 @@ export class Game {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    const hit = () => {
-      // If it is the user playing
-      if (isUsersTurn) {
-        // Gives the player a card
-        this.players[this.posAtTable].handAddCard(this.shoe.popRandomCard());
-        // Updates interface
-        this.interface.hydrate(this.players, this.house, this.players[this.posAtTable]);
-        // Checking for a blackjack
-        if (this.players[this.posAtTable].handIsBlackjack()) {
-          // If hand is split and another hand can be played, move to next hand
-          // If not split, it will simply goto the dealer
-          if (!this.players[this.posAtTable].handNext()) {
-            houseTurn();
-          }
-        } else if (this.players[this.posAtTable].handIsBust()) {
-          // Checking for a bust.
-          // If not split, it will simply goto the dealer
-          if (this.players[this.posAtTable].handHasNext()) {
-            this.players[this.posAtTable].handNext();
-            this.interface.hydrate(this.players, this.house, this.players[this.posAtTable]);
-          } else {
+    const hit = (playerIndex) => {
+      // Gives the player a card
+      this.players[playerIndex].handAddCard(this.shoe.popRandomCard());
+      // Updates interface
+      this.interface.hydrate(this.players, this.house, this.players[playerIndex]);
+      // Checking for a blackjack
+      if (this.players[playerIndex].handIsBlackjack()) {
+        // If hand is split and another hand can be played, move to next hand
+        // If not split, it will simply goto the dealer
+        if (!this.players[playerIndex].handNext() && isUsersTurn) {
+          isUsersTurn = false;
+          houseTurn();
+          return false;
+        }
+        return true;
+      } else if (this.players[playerIndex].handIsBust()) {
+        // Checking for a bust.
+        // If not split, it will simply goto the dealer
+        if (this.players[playerIndex].handHasNext()) {
+          this.players[playerIndex].handNext();
+          this.interface.hydrate(this.players, this.house, this.players[playerIndex]);
+          return true;
+        } else {
+          if (isUsersTurn) {
             isUsersTurn = false;
             houseTurn();
           }
+          return false;
         }
-      } else {
-        // This is where the other CPU players actions will go.
       }
     }
 
-    const doubleDown = () => {
+    const doubleDown = (playerIndex) => {
       if (isUsersTurn) {
         console.log(this.players[this.posAtTable].handGet().cards.length);
         if (this.players[this.posAtTable].handGet().cards.length > 2) {
@@ -141,7 +143,7 @@ export class Game {
       }
     }
 
-    const split = () => {
+    const split = (playerIndex) => {
       if (isUsersTurn) {
         if (this.players[this.posAtTable].handIsSplitable()) {
           this.players[this.posAtTable].handSplit();
@@ -155,7 +157,7 @@ export class Game {
       }
     }
 
-    const stand = () => {
+    const stand = (playerIndex) => {
       if (isUsersTurn) {
 
         if (this.players[this.posAtTable].handHasNext()) {
@@ -299,19 +301,19 @@ export class Game {
     const createToolbarListeners = () => {
 
       document.getElementById("toolbarHit").addEventListener('click', function() {
-        if (isRoundActive) hit();
+        if (isRoundActive) hit(window.game.posAtTable);
       });
 
       document.getElementById("toolbarSplit").addEventListener('click', function() {
-        if (isRoundActive) split();
+        if (isRoundActive) split(window.game.posAtTable);
       });
 
       document.getElementById("toolbarDoubleDown").addEventListener('click', function() {
-        if (isRoundActive) doubleDown();
+        if (isRoundActive) doubleDown(window.game.posAtTable);
       });
 
       document.getElementById("toolbarStand").addEventListener('click', function() {
-        if (isRoundActive) stand();
+        if (isRoundActive) stand(window.game.posAtTable);
       });
 
     }
