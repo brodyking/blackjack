@@ -85,34 +85,32 @@ export class Game {
     }
 
     const hit = (playerIndex) => {
-      // Gives the player a card
-      this.players[playerIndex].handAddCard(this.shoe.popRandomCard());
-      // Updates interface
-      this.interface.hydrate(this.players, this.house, this.players[playerIndex]);
-      // Checking for a blackjack
-      if (this.players[playerIndex].handIsBlackjack()) {
-        // If hand is split and another hand can be played, move to next hand
-        // If not split, it will simply goto the dealer
-        if (!this.players[playerIndex].handNext() && isUsersTurn) {
-          isUsersTurn = false;
-          houseTurn();
-          return false;
-        }
-        return true;
-      } else if (this.players[playerIndex].handIsBust()) {
-        // Checking for a bust.
-        // If not split, it will simply goto the dealer
-        if (this.players[playerIndex].handHasNext()) {
-          this.players[playerIndex].handNext();
-          this.interface.hydrate(this.players, this.house, this.players[playerIndex]);
-          return true;
-        } else {
-          if (isUsersTurn) {
+      // If it is the user playing
+      if (isUsersTurn) {
+        // Gives the player a card
+        this.players[this.posAtTable].handAddCard(this.shoe.popRandomCard());
+        // Updates interface
+        this.interface.hydrate(this.players, this.house, this.players[this.posAtTable]);
+        // Checking for a blackjack
+        if (this.players[this.posAtTable].handIsBlackjack()) {
+          // If hand is split and another hand can be played, move to next hand
+          // If not split, it will simply goto the dealer
+          if (!this.players[this.posAtTable].handNext()) {
+            houseTurn();
+          }
+        } else if (this.players[this.posAtTable].handIsBust()) {
+          // Checking for a bust.
+          // If not split, it will simply goto the dealer
+          if (this.players[this.posAtTable].handHasNext()) {
+            this.players[this.posAtTable].handNext();
+            this.interface.hydrate(this.players, this.house, this.players[this.posAtTable]);
+          } else {
             isUsersTurn = false;
             houseTurn();
           }
-          return false;
         }
+      } else {
+        // This is where the other CPU players actions will go.
       }
     }
 
@@ -235,7 +233,6 @@ export class Game {
             console.log("bigger hand");
             playerWinnings[playerIndex] = playerWinnings[playerIndex] - hand.bet;
           }
-          console.log(playerWinnings);
 
         }
 
@@ -244,16 +241,11 @@ export class Game {
 
       });
 
-      console.log(playerWinnings[0]);
-      console.log(this.posAtTable);
-      console.log(playerWinnings[this.posAtTable]);
       let usersTotalWinnings = playerWinnings[this.posAtTable];
       let handsToSend = {
         "users": this.players[this.posAtTable].hands,
         "house": this.house.hands[0]
       };
-      console.log(usersTotalWinnings);
-      console.log(usersTotalWinnings === 0);
       if (usersTotalWinnings === 0) {
         this.interface.push(usersTotalWinnings, handsToSend)
       } else if (usersTotalWinnings > 0) {

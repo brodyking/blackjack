@@ -25,8 +25,6 @@ export class hardTotals {
     if (index < 0) {
       return 'H';
     }
-    console.log(index);
-    console.log(dealerUpcard - 2);
     return this.chart[index][dealerUpcard - 2];
   }
 }
