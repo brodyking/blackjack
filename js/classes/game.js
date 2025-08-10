@@ -271,9 +271,9 @@ export class Game {
 
             // This is where the CPUS could make an action
             try {
-              playstyle.getAction(currentPlayer.handGet(), this.house.hands[0].cards[1]);
-            } catch {
-              console.log("error");
+              console.log(playstyle.getAction(currentPlayer.handGet(), this.house.hands[0].cards[1]));
+            } catch (error) {
+              console.log(error);
             }
 
             this.interface.hydrate(this.players, this.house, currentPlayer);
@@ -322,9 +322,9 @@ export class Game {
 
       // This is where the CPUS could make an action
       try {
-        playstyle.getAction(currentPlayer.handGet(), this.house.hands[0].cards[1]);
-      } catch {
-        console.log("error");
+        console.log(playstyle.getAction(currentPlayer.handGet(), this.house.hands[0].cards[1]));
+      } catch (error) {
+        console.log(error);
       }
 
       this.interface.hydrate(this.players, this.house, currentPlayer);
