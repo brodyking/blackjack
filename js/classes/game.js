@@ -1,6 +1,7 @@
 import { Interface } from './interface.js';
 import { Shoe } from './shoe.js';
 import { Player } from './player.js';
+import { Playstyle } from './playstyle.js';
 
 export class Game {
   constructor() {
@@ -76,6 +77,8 @@ export class Game {
     // Is the round still active
     // If player gets blackjack on deal or busts
     let isRoundActive = true;
+
+    let playstyle = new Playstyle;
 
     const sleep = (ms) => {
       return new Promise(resolve => setTimeout(resolve, ms));
@@ -168,62 +171,88 @@ export class Game {
     }
 
     const determineWinnings = () => {
+      let playerWinnings = [];
       let playerIndex = 0;
       this.players.forEach((player) => {
         // The total amount either being added or removed from the players balance
-        let playersTotalWinnings = 0;
+        playerWinnings.push(0);
+        console.log(player.name);
         for (let hand of player.hands) {
 
-          // If hand is a blackjack
-          if (hand.isBlackjack) {
-            // If blackjack occoured with only two cards, pays 3-2
-            if (hand.cards.length == 2) {
-              playersTotalWinnings += hand.bet * (3 / 2);
-            } else {
-              playersTotalWinnings += hand.bet;
+          // If house hand or player hand is a blackjack
+          if (hand.isBlackjack || this.house.handIsBlackjack()) {
+            // If the house had a blackjack at the start
+            if (this.house.handIsBlackjack() && this.house.hands[0].cards.length == 2) {
+              playerWinnings[playerIndex] -= hand.bet;
+              console.log("house has blackjack at the start");
+              console.log(playerWinnings);
+              continue;
             }
-            continue;
+
+            // If player had a 2 card blackjack, pay them 3-2
+            // Else, give them the standard win
+            if (hand.cards.length == 2) {
+              playerWinnings[playerIndex] = playerWinnings[playerIndex] + hand.bet * (3 / 2);
+              console.log("player 2-3 bj");
+              console.log(playerWinnings);
+              continue;
+            }
+
           }
 
           // If hand is a bust
           if (hand.isBust) {
-            playersTotalWinnings -= hand.bet;
-            continue;
-          }
-
-          // If hand is a push
-          if (hand.getSum() == this.house.handGetSum()) {
+            playerWinnings[playerIndex] = playerWinnings[playerIndex] - hand.bet;
+            console.log("hand is bust");
+            console.log(playerWinnings);
             continue;
           }
 
           // If house busts
           if (this.house.handIsBust()) {
-            playersTotalWinnings += hand.bet;
+            playerWinnings[playerIndex] = playerWinnings[playerIndex] + hand.bet;
+            console.log("house bust");
+            console.log(playerWinnings);
             continue;
           }
+
+          // If hand is a push
+          if (hand.getSum() === this.house.handGetSum()) {
+            console.log("push");
+            console.log(playerWinnings);
+            continue;
+          }
+
 
           // If hand is higher than the house
           // Else statement is if hand is lower than the house
           if (hand.getSum() > this.house.handGetSum()) {
-            playersTotalWinnings += hand.bet;
+            console.log("bigger hand");
+            playerWinnings[playerIndex] = playerWinnings[playerIndex] + hand.bet;
           } else {
-            playersTotalWinnings -= hand.bet;
+            console.log("bigger hand");
+            playerWinnings[playerIndex] = playerWinnings[playerIndex] - hand.bet;
           }
+          console.log(playerWinnings);
 
         }
 
-        this.players[playerIndex].balance = parseInt(this.players[playerIndex].balance) + parseInt(playersTotalWinnings);
-
-
+        this.players[playerIndex].balance = parseInt(this.players[playerIndex].balance) + parseInt(playerWinnings[playerIndex]);
+        playerIndex++;
 
       });
 
-      let usersTotalWinnings = this.players[this.posAtTable].balance;
+      console.log(playerWinnings[0]);
+      console.log(this.posAtTable);
+      console.log(playerWinnings[this.posAtTable]);
+      let usersTotalWinnings = playerWinnings[this.posAtTable];
       let handsToSend = {
         "users": this.players[this.posAtTable].hands,
         "house": this.house.hands[0]
       };
-      if (usersTotalWinnings == 0) {
+      console.log(usersTotalWinnings);
+      console.log(usersTotalWinnings === 0);
+      if (usersTotalWinnings === 0) {
         this.interface.push(usersTotalWinnings, handsToSend)
       } else if (usersTotalWinnings > 0) {
         this.interface.win(usersTotalWinnings, handsToSend);
@@ -239,7 +268,14 @@ export class Game {
         if (this.posAtTable + 1 < this.players.length) {
           for (let i = this.posAtTable + 1; i < this.players.length; i++) {
             let currentPlayer = this.players[i];
+
             // This is where the CPUS could make an action
+            try {
+              playstyle.getAction(currentPlayer.handGet(), this.house.hands[0].cards[1]);
+            } catch {
+              console.log("error");
+            }
+
             this.interface.hydrate(this.players, this.house, currentPlayer);
           }
         }
@@ -281,21 +317,22 @@ export class Game {
     }
 
     // Loops through all of the CPU players before the user.
-    for (let i = 0; i < this.players.length; i++) {
+    for (let i = 0; i < this.posAtTable; i++) {
       let currentPlayer = this.players[i];
 
       // This is where the CPUS could make an action
+      try {
+        playstyle.getAction(currentPlayer.handGet(), this.house.hands[0].cards[1]);
+      } catch {
+        console.log("error");
+      }
 
       this.interface.hydrate(this.players, this.house, currentPlayer);
 
-      if (currentPlayer.name == "You") {
-        isUsersTurn = true;
-        break;
-      }
-
     }
 
-
+    isUsersTurn = true;
+    this.interface.hydrate(this.players, this.house, this.players[this.posAtTable]);
 
     if (this.players[this.posAtTable].handGetSum() == 21) {
       this.interface.hydrate(this.players, this.house, this.players[this.posAtTable]);
