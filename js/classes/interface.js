@@ -83,6 +83,7 @@ export class Interface {
     <div id="errorSnackbar" class="snackbar error top"></div>
     <div id="successSnackbar" class="snackbar primary top"></div>
  `;
+    window.scrollTo(0, 0);
     document.getElementById("gameBetAmount").focus();
   }
 
@@ -163,7 +164,7 @@ export class Interface {
       </dialog>
 
       <dialog id="pushDialog">
-        <h5 style="color:#8bc34a">You pushed for $<span id="pushDialogAmount"></span>!</h5>
+        <h5 style="color:#8bc34a">You pushed!</h5>
         <div id="pushDialogHands"></div>
         <nav class="right-align no-space">
           <button onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);" class="transparent link">Next Round</button>
@@ -244,7 +245,6 @@ export class Interface {
 
 
   push(amount, hands) {
-    document.getElementById("pushDialogAmount").innerHTML = amount;
     let handsHtml = "<div style='font-size:20px;text-align:center;margin-top:15px!important;'>Your hand(s):</div>";
     hands.users.forEach((hand) => {
       handsHtml += "<article class='border'>";
