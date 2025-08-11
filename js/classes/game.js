@@ -95,8 +95,10 @@ export class Game {
         if (this.players[this.posAtTable].handIsBlackjack()) {
           // If hand is split and another hand can be played, move to next hand
           // If not split, it will simply goto the dealer
-          if (!this.players[this.posAtTable].handNext()) {
+          if (!this.players[this.posAtTable].handHasNext()) {
             houseTurn();
+          } else {
+            this.players[this.posAtTable].handNext();
           }
         } else if (this.players[this.posAtTable].handIsBust()) {
           // Checking for a bust.
@@ -109,14 +111,42 @@ export class Game {
             houseTurn();
           }
         }
+        return 0;
       } else {
-        // This is where the other CPU players actions will go.
+        // CPU actions
+        // 
+        // Gives the player a card
+        this.players[playerIndex].handAddCard(this.shoe.popRandomCard());
+        // Updates interface
+        this.interface.hydrate(this.players, this.house, this.players[playerIndex]);
+        // Checking for a blackjack
+        if (this.players[playerIndex].handIsBlackjack()) {
+          // If hand is split and another hand can be played, move to next hand
+          // If not split, it will simply goto the dealer
+          if (!this.players[playerIndex].handHasNext()) {
+            return false;
+          } else {
+            this.players[playerIndex].handNext();
+            return true;
+          }
+        } else if (this.players[playerIndex].handIsBust()) {
+          // Checking for a bust.
+          // If not split, it will simply goto the dealer
+          if (this.players[playerIndex].handHasNext()) {
+            this.players[playerIndex].handNext();
+            this.interface.hydrate(this.players, this.house, this.players[playerIndex]);
+            return true;
+          } else {
+            return false;
+          }
+        } else {
+          return true;
+        }
       }
     }
 
     const doubleDown = (playerIndex) => {
       if (isUsersTurn) {
-        console.log(this.players[this.posAtTable].handGet().cards.length);
         if (this.players[this.posAtTable].handGet().cards.length > 2) {
           this.interface.showError("You cannot double down after hitting");
         } else if (this.players[this.posAtTable].tempBalance < this.players[this.posAtTable].betInitial) {
@@ -131,11 +161,32 @@ export class Game {
           // Next hand if split
           if (this.players[this.posAtTable].handHasNext()) {
             this.players[this.posAtTable].handNext();
-            this.players[this.posAtTable].handAddCard(this.shoe.popRandomCard());
             this.interface.hydrate(this.players, this.house, this.players[this.posAtTable]);
           } else {
             isUsersTurn = false;
             houseTurn();
+          }
+        }
+        return 0;
+      } else {
+        if (this.players[playerIndex].handGet().cards.length > 2) {
+          return false;
+        } else if (this.players[playerIndex].tempBalance < this.players[playerIndex].betInitial) {
+          return false;
+        } else {
+          // Gives the player a new card
+          this.players[playerIndex].handAddCard(this.shoe.popRandomCard());
+          // Sets it as a double down
+          this.players[playerIndex].doubleDown();
+          // Redraw screen
+          this.interface.hydrate(this.players, this.house, this.players[playerIndex]);
+          // Next hand if split
+          if (this.players[playerIndex].handHasNext()) {
+            this.players[playerIndex].handNext();
+            this.interface.hydrate(this.players, this.house, this.players[playerIndex]);
+            return true;
+          } else {
+            return false;
           }
         }
       }
@@ -152,6 +203,17 @@ export class Game {
         } else {
           this.interface.showError("You must have 2 cards of the same value to split");
         }
+        return 0;
+      } else {
+        if (this.players[playerIndex].handIsSplitable()) {
+          this.players[playerIndex].handSplit();
+          this.interface.gameScreen(this.players);
+          this.players[playerIndex].handAddCard(this.shoe.popRandomCard());
+          this.interface.hydrate(this.players, this.house, this.players[playerIndex]);
+          return true;
+        } else {
+          return false;
+        }
       }
     }
 
@@ -165,6 +227,17 @@ export class Game {
         } else {
           isUsersTurn = false;
           houseTurn();
+        }
+        return 0;
+      } else {
+
+        if (this.players[playerIndex].handHasNext()) {
+          this.players[playerIndex].handNext();
+          this.players[playerIndex].handAddCard(this.shoe.popRandomCard());
+          this.interface.hydrate(this.players, this.house, this.players[playerIndex]);
+          return true;
+        } else {
+          return false;
         }
 
       }
@@ -255,24 +328,76 @@ export class Game {
       }
     }
 
+    const postUserTurn = async () => {
+      // Finish the players after you at the table.
+      if (this.posAtTable + 1 < this.players.length) {
+        for (let i = this.posAtTable + 1; i < this.players.length; i++) {
+          let currentPlayer = this.players[i];
+
+          // This is where the CPUS could make an action
+          while (true) {
+            let currentAction = playstyle.getAction(currentPlayer.handGet(), this.house.hands[0].cards[1]);
+            let actionResponse = null;
+            switch (currentAction) {
+              case "H":
+                actionResponse = hit(i);
+                break;
+              case "S":
+                actionResponse = stand(i);
+                break;
+              case "D":
+                actionResponse = doubleDown(i);
+                break;
+              default:
+                actionResponse = stand(i);
+                break;
+            }
+            if (actionResponse === false) {
+              break;
+            }
+          }
+          this.interface.hydrate(this.players, this.house, currentPlayer);
+          await sleep(1000);
+        }
+      }
+    }
+
+    const preUserTurn = async () => {
+      // Loops through all of the CPU players before the user.
+      for (let i = 0; i < this.posAtTable; i++) {
+        let currentPlayer = this.players[i];
+
+        // This is where the CPUS could make an action
+        while (true) {
+          let currentAction = playstyle.getAction(currentPlayer.handGet(), this.house.hands[0].cards[1]);
+          let actionResponse = null;
+          switch (currentAction) {
+            case "H":
+              actionResponse = hit(i);
+              break;
+            case "S":
+              actionResponse = stand(i);
+              break;
+            case "D":
+              actionResponse = doubleDown(i);
+              break;
+            default:
+              actionResponse = stand(i);
+              break;
+          }
+          if (actionResponse === false) {
+            break;
+          }
+        }
+        this.interface.hydrate(this.players, this.house, currentPlayer);
+        await sleep(1000);
+      }
+    }
+
     const houseTurn = async () => {
       if (!isUsersTurn) {
 
-        // Finish the players after you at the table.
-        if (this.posAtTable + 1 < this.players.length) {
-          for (let i = this.posAtTable + 1; i < this.players.length; i++) {
-            let currentPlayer = this.players[i];
-
-            // This is where the CPUS could make an action
-            try {
-              console.log(playstyle.getAction(currentPlayer.handGet(), this.house.hands[0].cards[1]));
-            } catch (error) {
-              console.log(error);
-            }
-
-            this.interface.hydrate(this.players, this.house, currentPlayer);
-          }
-        }
+        await postUserTurn();
 
         this.house.handIsDealerPlaying(true);
         this.interface.hydrate(this.players, this.house, this.house);
@@ -311,19 +436,7 @@ export class Game {
     }
 
     // Loops through all of the CPU players before the user.
-    for (let i = 0; i < this.posAtTable; i++) {
-      let currentPlayer = this.players[i];
-
-      // This is where the CPUS could make an action
-      try {
-        console.log(playstyle.getAction(currentPlayer.handGet(), this.house.hands[0].cards[1]));
-      } catch (error) {
-        console.log(error);
-      }
-
-      this.interface.hydrate(this.players, this.house, currentPlayer);
-
-    }
+    await preUserTurn();
 
     isUsersTurn = true;
     this.interface.hydrate(this.players, this.house, this.players[this.posAtTable]);
