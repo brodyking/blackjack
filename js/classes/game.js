@@ -249,7 +249,6 @@ export class Game {
       this.players.forEach((player) => {
         // The total amount either being added or removed from the players balance
         playerWinnings.push(0);
-        console.log(player.name);
         for (let hand of player.hands) {
 
           // If house hand or player hand is a blackjack
@@ -257,8 +256,6 @@ export class Game {
             // If the house had a blackjack at the start
             if (this.house.handIsBlackjack() && this.house.hands[0].cards.length == 2) {
               playerWinnings[playerIndex] -= hand.bet;
-              console.log("house has blackjack at the start");
-              console.log(playerWinnings);
               continue;
             }
 
@@ -266,8 +263,6 @@ export class Game {
             // Else, give them the standard win
             if (hand.cards.length == 2) {
               playerWinnings[playerIndex] = playerWinnings[playerIndex] + hand.bet * (3 / 2);
-              console.log("player 2-3 bj");
-              console.log(playerWinnings);
               continue;
             }
 
@@ -276,23 +271,17 @@ export class Game {
           // If hand is a bust
           if (hand.isBust) {
             playerWinnings[playerIndex] = playerWinnings[playerIndex] - hand.bet;
-            console.log("hand is bust");
-            console.log(playerWinnings);
             continue;
           }
 
           // If house busts
           if (this.house.handIsBust()) {
             playerWinnings[playerIndex] = playerWinnings[playerIndex] + hand.bet;
-            console.log("house bust");
-            console.log(playerWinnings);
             continue;
           }
 
           // If hand is a push
           if (hand.getSum() === this.house.handGetSum()) {
-            console.log("push");
-            console.log(playerWinnings);
             continue;
           }
 
@@ -300,10 +289,8 @@ export class Game {
           // If hand is higher than the house
           // Else statement is if hand is lower than the house
           if (hand.getSum() > this.house.handGetSum()) {
-            console.log("bigger hand");
             playerWinnings[playerIndex] = playerWinnings[playerIndex] + hand.bet;
           } else {
-            console.log("bigger hand");
             playerWinnings[playerIndex] = playerWinnings[playerIndex] - hand.bet;
           }
 
