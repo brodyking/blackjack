@@ -3,13 +3,125 @@
   src: url('/fonts/Ubuntu-Regular.ttf');
 }
 
+@font-face {
+  font-family: DMSerifText;
+  src: url('/fonts/DMSerifText.ttf');
+}
+
 body {
   font-family: Ubuntu !important;
 }
 
+header {
+  max-width: 600px;
+  margin: auto;
+}
+
+.bust-text {
+  color: #ff5050 !important;
+}
+
+.win-text {
+  color: #4caf50 !important;
+}
+
+.game-table {
+  background-color: #4caf50;
+  border: 10px solid #795548;
+  padding: 30px;
+  padding-bottom: 20px;
+}
+
+.game-table>nav {
+  justify-content: center;
+}
+
+.game-table>nav>button {
+  background-color: #795548 !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.players-area {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  flex-wrap: wrap;
+  grap: 2rem;
+  width: 100%;
+}
+
+.dealer-area {
+  margin-top: 2em;
+  margin-bottom: 2em;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-table>.players-area>article,
+.game-table>.dealer-area>article {
+  background: none;
+  color: white;
+  background-color: #104f28;
+  margin: 5px;
+}
+
+.game-table>form {
+  border: none !important;
+  background-color: #795548 !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  max-width: 700px;
+  padding: 30px;
+}
+
+.game-table>form>h5 {
+  margin-bottom: 20px;
+}
+
+.game-table>form>div>button {
+  background-color: #bb8872 !important;
+  color: white;
+}
+
+.game-table>form>div>select {
+  background: none !important;
+}
+
+.active-player {
+  border: 5px solid #a3e635 !important;
+  margin: 0px;
+}
+
+#gameBody>dialog {
+  background-color: #795548 !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  max-width: 700px;
+  padding: 30px;
+}
+
+
+#gameBody>dialog>div>article {
+  border: 5px solid #a3e635 !important;
+  background: none;
+  color: white;
+  background-color: #104f28;
+  margin: 5px;
+}
+
+#gameBody>dialog>h5 {
+  text-align: center;
+}
+
+#gameBody>dialog>button {
+  margin-top: 20px;
+  background-color: #bb8872 !important;
+  color: white;
+}
 
 #gameBody {
   padding: 10px;
+  font-family: DMSerifText !important;
 }
 
 .text-link {
@@ -28,8 +140,8 @@ article {
 
 [class*=" pcard-"],
 [class^=pcard-] {
-  width: 80px !important;
-  height: 100px !important;
+  width: 75px !important;
+  height: 80px !important;
   margin-top: 20px;
   border-radius: 0px !important;
 }
