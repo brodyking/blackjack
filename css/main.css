@@ -80,7 +80,7 @@ header {
 }
 
 .game-table>form>div>button {
-  background-color: #bb8872 !important;
+  background-color: #2f201a !important;
   color: white;
 }
 
@@ -115,7 +115,7 @@ header {
 
 #gameBody>dialog>button {
   margin-top: 20px;
-  background-color: #bb8872 !important;
+  background-color: #2f201a !important;
   color: white;
 }
 
