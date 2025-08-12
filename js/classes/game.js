@@ -396,6 +396,8 @@ export class Game {
           this.interface.hydrate(this.players, this.house, this.house);
         }
 
+        await sleep(1000);
+
         determineWinnings();
 
       }
