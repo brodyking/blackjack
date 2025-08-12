@@ -6,9 +6,9 @@ export class Interface {
 
   startScreen() {
     this.dom.innerHTML = `
-    <article class="middle-align center-align">
-      <fieldset style="width:100%;">
-        <legend>Game Settings</legend>
+    <article class="game-table rounded middle-align center-align">
+      <form>
+        <h5>Game Settings</h5>
         <div class="field border prefix label">
           <i>attach_money</i>
           <input type="number" id="gameSettingsStartingBalance" value="100">
@@ -41,7 +41,7 @@ export class Interface {
         </div>
         <div class="field border label">
           <div class="space"></div>
-          <button class="responsive" onclick="window.game.initGame();">
+          <button class="responsive extra" onclick="window.game.initGame();">
             <i>play_arrow</i>
             <span>Start game</span>
           </button>
@@ -65,7 +65,8 @@ export class Interface {
 
   betScreen(currentPlayer) {
     this.dom.innerHTML = `
-    <article class="medium middle-align center-align">
+    <article class="game-table rounded middle-align center-align">
+      <form>
       <div><i class="extra">poker_chip</i>
       <div class="space"></div>
       <legend>How much would you like to bet?<br><strong>Current Balance: </strong>$`+ currentPlayer.balance + `</legend>
@@ -79,6 +80,7 @@ export class Interface {
       <span>Start round</span>
     </button>
       </div>
+  </form>
     </article>
     <div id="errorSnackbar" class="snackbar error top"></div>
     <div id="successSnackbar" class="snackbar primary top"></div>
@@ -102,7 +104,7 @@ export class Interface {
         // Ids: box: name-handindex-box
         //      hand: name-handindex-hand
         playersarea += `
-      <article class="border" id="`+ player.name + `-` + handIndex + `-box" style="float:left;display:block;text-align:left;margin-top:5px;">
+      <article id="`+ player.name + `-` + handIndex + `-box">
         <h5>` + player.name + ` <span style="font-size:15px!important;">Bet: <span id="` + player.name + `-` + handIndex + `-bet"></span></h5>
         <span id="`+ player.name + `-` + handIndex + `-hand"></span>
         <h5 style="text-align:center;margin:0px;" id="` + player.name + `-` + handIndex + `-sum"></h5>
@@ -110,73 +112,67 @@ export class Interface {
         handIndex++;
       })
     });
-    this.dom.innerHTML = playersarea +
-      `<article class="border" style="float:right;display:block;text-align:right;margin-top:5px;" id="house-box">
-        <h5>House <span id="house-balance"></span></h5>
-        <span id="house-hand"></span>
-        <h5 style="text-align:center;margin:0px;" id="house-sum"></h5>
-      </article>
-      <nav class="tiny-space actionbar" style="width:100%!important;">
-        <nav class="toolbar" style="width:100%!important;">
-          <a class="mobile-toolbar" id="toolbarHit">
+    this.dom.innerHTML = `
+      <div class="game-table rounded">
+        <div class="players-area">` + playersarea + `</div>
+        <div class="dealer-area">
+          <article id="house-box">
+          <h5>House <span id="house-balance"></span></h5>
+          <span id="house-hand"></span>
+          <h5 style="text-align:center;margin:0px;" id="house-sum"></h5>
+        </article>
+        </div>
+        <nav class="group connected">
+          <button id="toolbarHit"class="left-round extra">
             <i class="align-center">wrist</i>
-            <div> Hit</div>
-          </a>
-          <a class="mobile-toolbar" id="toolbarDoubleDown">
+            <div class="nomobile"> Hit</div>
+          </button>
+          <button id="toolbarDoubleDown"class="no-round extra">
             <i class="align-center">attach_money</i>
-            <div> Double</div>
-          </a>
-          <a class="mobile-toolbar" id="toolbarSplit">
+            <div class="nomobile"> Double</div>
+          </button>
+          <button id="toolbarSplit"class="no-round extra">
             <i class="align-center">call_split</i>
-            <div> Split</div>
-          </a>
-          <a class="mobile-toolbar" id="toolbarStand">
+            <div class="nomobile"> Split</div>
+          </button>
+          <button id="toolbarStand"class="right-round extra">
             <i class="middle-align">front_hand</i>
-            <div> Stand</div>
-          </a>
+            <div class="nomobile"> Stand</div>
+          </button>
         </nav>
-      </nav>
+
+      </div>
 
       <!-- Alert Dialog -->
       <dialog id="alertDialog">
         <h5 id="alertDialogHead"></h5>
         <div id="alertDialogBody"></div>
-                <nav class="right-align no-space">
-          <button onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);" class="transparent link">Next Round</button>
-        </nav>
+        <button class="responsive" onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);">Next Round</button>
       </dialog>
 
       <!-- Loss Dialog -->
       <dialog id="lossDialog">
-        <h5 class="error-text">You lost $<span id="lossDialogAmount"></span>.</h5>
+        <h5>You lost $<span id="lossDialogAmount"></span>.</h5>
         <div id="lossDialogHands"></div>
-        <nav class="right-align no-space">
-          <button onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);" class="transparent link">Next Round</button>
-        </nav>
+        <button class="responsive" onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);">Next Round</button>
       </dialog>
 
       <dialog id="winDialog">
-        <h5 style="color:#8bc34a">You won $<span id="winDialogAmount"></span>!</h5>
+        <h5>You won $<span id="winDialogAmount"></span>!</h5>
         <div id="winDialogHands"></div>
-        <nav class="right-align no-space">
-          <button onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);" class="transparent link">Next Round</button>
-        </nav>
+        <button class="responsive" onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);">Next Round</button>
       </dialog>
 
       <dialog id="pushDialog">
-        <h5 style="color:#8bc34a">You pushed!</h5>
+        <h5>You pushed!</h5>
         <div id="pushDialogHands"></div>
-        <nav class="right-align no-space">
-          <button onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);" class="transparent link">Next Round</button>
-        </nav>
+        <button class="responsive" onclick="window.game.interface.betScreen(window.game.players[window.game.posAtTable]);">Next Round</button>
       </dialog>
 
       <!-- Count Dialog -->
       <dialog id="countDialog">
         <div>The current count is <span id="countDialogNumber"></span>.</div>
-        <nav class="right-align no-space">
-          <button onclick="document.getElementById('countDialog').close();" class="transparent link">Close</button>
-        </nav>
+        <button class="responsive" onclick="document.getElementById('countDialog').close();" class="transparent link">Close</button>
       </dialog>
 
     <div id="errorSnackbar" class="snackbar error top"></div>
@@ -189,34 +185,34 @@ export class Interface {
       let handIndex = 0;
       player.hands.forEach((hand) => {
         if (activePlayer.name == player.name && player.currentHand == handIndex) {
-          document.getElementById(player.name + "-" + handIndex + "-box").classList.add("primary-border");
+          document.getElementById(player.name + "-" + handIndex + "-box").classList.add("active-player");
         } else {
-          document.getElementById(player.name + "-" + handIndex + "-box").classList.remove("primary-border");
+          document.getElementById(player.name + "-" + handIndex + "-box").classList.remove("active-player");
         }
         document.getElementById(player.name + "-" + handIndex + "-hand").innerHTML = player.hands[handIndex].toString();
         document.getElementById(player.name + "-" + handIndex + "-sum").innerHTML = player.hands[handIndex].getSum();
         document.getElementById(player.name + "-" + handIndex + "-bet").innerHTML = player.hands[handIndex].bet;
         if (hand.isBust) {
           document.getElementById(player.name + "-" + handIndex + "-sum").innerHTML += " - Bust";
-          document.getElementById(player.name + "-" + handIndex + "-sum").classList.add("error-text");
+          document.getElementById(player.name + "-" + handIndex + "-sum").classList.add("bust-text");
         } else if (hand.isBlackjack) {
           document.getElementById(player.name + "-" + handIndex + "-sum").innerHTML += " - Blackjack";
-          document.getElementById(player.name + "-" + handIndex + "-sum").classList.add("primary-text");
+          document.getElementById(player.name + "-" + handIndex + "-sum").classList.add("win-text");
         }
         handIndex++;
       });
       if (activePlayer.name == "House") {
-        document.getElementById("house-box").classList.add("primary-border");
+        document.getElementById("house-box").classList.add("active-player");
       } else {
-        document.getElementById("house-box").classList.remove("primary-border");
+        document.getElementById("house-box").classList.remove("active-player");
       }
     });
     document.getElementById("house-hand").innerHTML = house.handToString();
-    document.getElementById("house-sum").innerHTML = " (" + house.handGetSum() + ")";
+    document.getElementById("house-sum").innerHTML = house.handGetSum();
   }
 
   lose(amount, hands) {
-    document.getElementById("lossDialogAmount").innerHTML = amount;
+    document.getElementById("lossDialogAmount").innerHTML = Math.abs(amount);
     let handsHtml = "<div style='font-size:20px;text-align:center;margin-top:15px!important;'>Your hand(s):</div>";
     hands.users.forEach((hand) => {
       handsHtml += "<article class='border'>";
