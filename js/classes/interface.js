@@ -8,7 +8,7 @@ export class Interface {
     this.dom.innerHTML = `
     <article class="game-table rounded middle-align center-align">
       <form>
-        <h5>Game Settings</h5>
+        <h5>New Game</h5>
         <div class="field border prefix label">
           <i>attach_money</i>
           <input type="number" id="gameSettingsStartingBalance" value="100">
@@ -21,7 +21,7 @@ export class Interface {
             <option value="2">2 Bots</option>
             <option value="3">3 Bots</option>
             <option value="4">4 Bots</option>
-            <option value="5">5 Bots</option>
+            <option value="5" selected>5 Bots</option>
             <option value="6">6 Bots</option>
           </select>
           <label>Bots</label>
