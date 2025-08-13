@@ -434,6 +434,13 @@ export class Game {
 
     }
 
+
+    if (this.house.hands[0].isBlackjack) {
+      isUsersTurn = false;
+      houseTurn();
+    }
+
+
     // Loops through all of the CPU players before the user.
     await preUserTurn();
 
@@ -442,11 +449,6 @@ export class Game {
 
     if (this.players[this.posAtTable].handGetSum() == 21) {
       this.interface.hydrate(this.players, this.house, this.players[this.posAtTable]);
-      isUsersTurn = false;
-      houseTurn();
-    }
-
-    if (this.house.hands[0].isBlackjack) {
       isUsersTurn = false;
       houseTurn();
     }
