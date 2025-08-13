@@ -67,9 +67,13 @@ header {
   margin: 5px;
 }
 
-.game-table>.chip {
+.game-table>.chipbtns {
+  float: left;
+}
+
+.game-table>.chipbtns>.chip {
   color: white !important;
-  background-color: #104f28;
+  background-color: #104f28 !important;
 }
 
 .game-table>form {

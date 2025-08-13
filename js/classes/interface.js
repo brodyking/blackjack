@@ -114,10 +114,16 @@ export class Interface {
     });
     this.dom.innerHTML = `
       <div class="game-table rounded">
-        <button class="chip">
-          <i>savings</i>
-          <span>Balance: $<span id="playerBalance"></span></span>
-        </button>
+        <nav class="group chipbtns">
+          <button class="chip" onclick="window.game.interface.startScreen();">
+            <i>refresh</i>
+          </button>
+          <button class="chip">
+            <i>savings</i>
+            <span>Balance: $<span id="playerBalance"></span></span>
+          </button>
+        </nav>
+
         <div class="players-area">` + playersarea + `</div>
         <div class="dealer-area">
           <article id="house-box">
