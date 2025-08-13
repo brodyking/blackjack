@@ -114,6 +114,10 @@ export class Interface {
     });
     this.dom.innerHTML = `
       <div class="game-table rounded">
+        <button class="chip">
+          <i>savings</i>
+          <span>Balance: $<span id="playerBalance"></span></span>
+        </button>
         <div class="players-area">` + playersarea + `</div>
         <div class="dealer-area">
           <article id="house-box">
@@ -206,9 +210,13 @@ export class Interface {
       } else {
         document.getElementById("house-box").classList.remove("active-player");
       }
+      if (player.name == "You") {
+        document.getElementById("playerBalance").innerHTML = player.tempBalance;
+      }
     });
     document.getElementById("house-hand").innerHTML = house.handToString();
     document.getElementById("house-sum").innerHTML = house.handGetSum();
+
   }
 
   lose(amount, hands) {
