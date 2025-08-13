@@ -435,12 +435,6 @@ export class Game {
     }
 
 
-    if (this.house.hands[0].isBlackjack) {
-      isUsersTurn = false;
-      houseTurn();
-    }
-
-
     // Loops through all of the CPU players before the user.
     await preUserTurn();
 
@@ -454,6 +448,7 @@ export class Game {
     }
 
     createToolbarListeners();
-
   }
+
+
 }
