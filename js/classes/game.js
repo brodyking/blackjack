@@ -446,6 +446,11 @@ export class Game {
       houseTurn();
     }
 
+    if (this.house.hands[0].isBlackjack) {
+      isUsersTurn = false;
+      houseTurn();
+    }
+
     createToolbarListeners();
 
   }
