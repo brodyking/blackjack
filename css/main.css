@@ -67,6 +67,11 @@ header {
   margin: 5px;
 }
 
+.game-table>.chip {
+  color: white !important;
+  background-color: #104f28;
+}
+
 .game-table>form {
   border: none !important;
   background-color: #795548 !important;
