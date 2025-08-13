@@ -258,14 +258,24 @@ export class Game {
               playerWinnings[playerIndex] -= hand.bet;
               continue;
             }
-
             // If player had a 2 card blackjack, pay them 3-2
             // Else, give them the standard win
-            if (hand.cards.length == 2) {
+            if (hand.cards.length == 2 && hand.isBlackjack) {
               playerWinnings[playerIndex] = playerWinnings[playerIndex] + hand.bet * (3 / 2);
               continue;
             }
 
+            if (this.house.handIsBlackjack() && hand.isBlackjack) {
+              continue;
+            }
+
+            if (this.house.handIsBlackjack) {
+              playerWinnings[playerIndex] = playerWinnings[playerIndex] - hand.bet;
+            }
+
+            if (hand.IsBlackjack) {
+              playerWinnings[playerIndex] = playerWinnings[playerIndex] + hand.bet;
+            }
           }
 
           // If hand is a bust
