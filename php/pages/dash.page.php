@@ -7,7 +7,7 @@
     <link href="/lib/svg-playing-cards-master/playing-cards.min.css" rel="stylesheet">
 </head>
 
-<body style="max-width: 600px;margin:auto;margin-top:25px" class="dark">
+<body style="max-width: 1000px;margin:auto;margin-top:25px" class="dark">
     <?php
 
     if (isset($_GET["error"])) {

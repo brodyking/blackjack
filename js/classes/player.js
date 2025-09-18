@@ -52,6 +52,7 @@ export class Player {
       this.hands[this.currentHand].removeCard(this.hands[this.currentHand].cards[1]);
       // Doubles the bet
       this.hands[this.currentHand + 1].bet = this.betInitial;
+      this.tempBalance = parseInt(this.tempBalance) - parseInt(this.betInitial);
       return true
     }
     return false;
@@ -73,6 +74,7 @@ export class Player {
     this.hands = [];
     this.hands[0] = new Hand(this.isDealer);
     this.currentHand = 0;
+    this.tempBalance = this.balance;
   }
 
   handAddCard(card) {
@@ -120,12 +122,12 @@ export class Player {
   betPlace(amount) {
     if (this.betInitial == 0) this.betInitial = amount
     this.hands[this.currentHand].bet = parseInt(amount);
-    this.tempBalance -= parseInt(amount);
+    this.tempBalance = parseInt(this.tempBalance) - parseInt(amount);
   }
 
   doubleDown() {
+    this.tempBalance = parseInt(this.tempBalance) - parseInt(this.hands[this.currentHand].bet);
     this.hands[this.currentHand].bet = parseInt(this.hands[this.currentHand].bet * 2);
     this.isDoubleDown = true;
-    this.tempBalance -= parseInt(this.bet);
   }
 }
